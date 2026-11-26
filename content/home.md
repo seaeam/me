@@ -9,17 +9,16 @@ Hey！It's seam，重邮在读研三前端小研发，正在向全栈转型
 
 `landing...` 
 
-熟悉产品和开发流程
+上手产品、开发流程
 
 - [![](/media/products/covey.png) Covey](https://convergeai.com/covey)
 - [![](/media/products/enter.png) Enter](https://convergeai.com/enter)
 - [![](/media/products/framia.png) Framia](https://convergeai.com/framia)
 - [![](/media/products/combos.png) Combos](https://convergeai.com/combos)
 
-工作之余 在 focus [![](/media/brands/gresume.svg) GResume](https://github.com/506-FETL/resume)
+工作之余  **focus** [![](/media/brands/gresume.svg) GResume](https://github.com/506-FETL/resume)
 
-如果你使用过，觉得它们有用，或者有任何建议、想法或吐槽，欢迎联系我
-
+如果你使用过，觉得它们有用，或者有任何建议、想法或吐槽，欢迎 `pr`
 
 ## Find me on
 

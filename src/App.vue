@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useHead } from '@unhead/vue'
 import SiteHeader from '@/components/site-header/index.vue'
+import ScrollToTop from '@/components/scroll-to-top.vue'
 import SiteBackground from '@/components/background/index.vue'
 import { site } from '@/lib/site'
 
@@ -32,6 +33,7 @@ useHead({
       >
     </p>
   </footer>
+  <ScrollToTop />
 </template>
 
 <style scoped>

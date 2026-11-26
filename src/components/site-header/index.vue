@@ -4,6 +4,11 @@ import { site } from '@/lib/site'
 import { sections } from '@/router/sections'
 import SiteSignature from './signature.vue'
 import ThemeToggle from './theme-toggle.vue'
+
+const sectionIcons = {
+  posts: 'i-ri-article-line',
+  projects: 'i-ri-lightbulb-line',
+}
 </script>
 <template>
   <header class="site-header">
@@ -11,11 +16,14 @@ import ThemeToggle from './theme-toggle.vue'
     <nav aria-label="主导航">
       <div class="nav-items">
         <RouterLink
-          v-for="item in sections"
+          v-for="(item, key) in sections"
           :key="item.path"
           :to="item.path"
+          :aria-label="item.label"
+          :title="item.label"
           class="nav-link">
-          {{ item.label }}
+          <i class="section-icon" :class="sectionIcons[key]" aria-hidden="true" />
+          <span class="section-label">{{ item.label }}</span>
         </RouterLink>
         <a
           v-if="site.github"
@@ -64,18 +72,27 @@ import ThemeToggle from './theme-toggle.vue'
 .nav-link:focus-visible {
   opacity: 1;
 }
+.nav-link .section-icon { display: none; }
 .theme-toggle .sun {
   display: var(--sun);
 }
 .theme-toggle .moon {
   display: var(--moon);
 }
-@media (max-width: 360px) {
+@media (max-width: 767.98px) {
+  .site-header .signature { top: 10px; }
   .site-header nav {
-    padding-inline: 1rem;
+    padding: .75rem 1rem;
   }
-  .nav-items {
-    gap: 1rem;
+  .nav-items { gap: 0; }
+  .nav-link {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
   }
+  .nav-link .section-label { display: none; }
+  .nav-link .section-icon { display: block; }
+  .nav-link[aria-current="page"] { opacity: 1; }
 }
 </style>

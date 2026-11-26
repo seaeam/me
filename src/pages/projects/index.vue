@@ -49,7 +49,7 @@ const projectGroups = [...groups.values()]
 
     <ProjectContents v-if="projectGroups.length" :groups="projectGroups" />
     <section v-for="group in projectGroups" :key="group.id" class="focus-section slide-enter" :aria-labelledby="group.id">
-      <h2 :id="group.id">{{ group.name }}</h2>
+      <h2 :id="group.id">{{ group.name.replace(/\s+/g, '\n') }}</h2>
       <div class="project-grid">
         <component
           :is="project.url ? 'a' : 'article'"
@@ -142,6 +142,31 @@ const projectGroups = [...groups.values()]
   justify-content: center;
   gap: 1rem;
   padding-block: .5rem;
+}
+@media (max-width: 767.98px) {
+  .focus-section {
+    --group-title-size: min(18.5vw, 5rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: var(--group-title-size) auto;
+  }
+  .focus-section h2 {
+    grid-area: 1 / 1 / 3;
+    align-self: start;
+    margin-inline: -1rem;
+    font-size: var(--group-title-size);
+    letter-spacing: -.025em;
+    line-height: .95;
+    white-space: pre-line;
+    overflow-wrap: normal;
+    pointer-events: none;
+  }
+  .project-grid {
+    grid-area: 2 / 1;
+    z-index: 1;
+    align-self: start;
+    padding-block-start: 0;
+  }
 }
 @media (min-width: 768px) {
   .project-grid { grid-template-columns: repeat(2, minmax(0, 350px)); }
