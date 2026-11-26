@@ -74,10 +74,10 @@ const sectionIcons = {
 }
 .nav-link .section-icon { display: none; }
 .theme-toggle .sun {
-  display: var(--sun);
+  display: var(--light-only);
 }
 .theme-toggle .moon {
-  display: var(--moon);
+  display: var(--dark-only);
 }
 @media (max-width: 767.98px) {
   .site-header .signature { top: 10px; }

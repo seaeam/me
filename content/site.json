@@ -1,7 +1,7 @@
 {
   "name": "seam",
-  "blogLabel": "博客",
-  "projectsLabel": "项目",
+  "blogLabel": "blog",
+  "projectsLabel": "Projects",
   "projectsIntro": "我创建或维护的项目",
   "github": "https://github.com/seaeam"
 }

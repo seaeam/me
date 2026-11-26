@@ -10,21 +10,21 @@
   --light-paper: #fff; --dark-paper: #050505;
   --paper: var(--light-paper); --ink: #374151; --prose: #555; --heading: #000; --pen: #303030;
   --dot-filter: none;
-  --sun: inline-block; --moon: none;
+  --light-only: inline-block; --dark-only: none;
   font: 400 16px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
   --paper: var(--dark-paper); --ink: #e5e7eb; --prose: #bbb; --heading: #fff; --pen: #fdfdfd;
   --dot-filter: invert(1);
-  --sun: none; --moon: inline-block;
+  --light-only: none; --dark-only: inline-block;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --paper: var(--dark-paper); --ink: #e5e7eb; --prose: #bbb; --heading: #fff; --pen: #fdfdfd;
     --dot-filter: invert(1);
-  --sun: none; --moon: inline-block;
+  --light-only: none; --dark-only: inline-block;
   }
 }
 *, *::before, *::after { box-sizing: border-box; }

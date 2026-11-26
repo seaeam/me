@@ -9,6 +9,7 @@ type Project = {
   group?: string
   description?: string
   icon?: string
+  iconDark?: string
   url?: string
 }
 const projects: Project[] = projectData
@@ -59,7 +60,8 @@ const projectGroups = [...groups.values()]
           :href="project.url || undefined"
           class="project-entry">
           <span v-if="project.icon" class="project-icon" aria-hidden="true">
-            <img :src="project.icon" alt="" width="36" height="36">
+            <img :src="project.icon" :class="{ 'icon-light': project.iconDark }" alt="" width="36" height="36">
+            <img v-if="project.iconDark" :src="project.iconDark" class="icon-dark" alt="" width="36" height="36">
           </span>
           <div>
             <h3>{{ project.name }}</h3>
@@ -123,6 +125,9 @@ const projectGroups = [...groups.values()]
 .focus-section {
   margin-top: 2.5rem;
   --stage: 1;
+}
+.focus-section.slide-enter {
+  animation-fill-mode: backwards;
 }
 .focus-section h2 {
   margin: 0 0 0 -1rem;
@@ -191,15 +196,18 @@ a.project-entry:is(:hover, :focus-visible) {
   opacity: 1;
 }
 .project-icon {
-  flex: none;
-  margin-top: .5rem;
-  filter: grayscale(1);
+  display: grid;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
 }
 .project-icon img {
+  grid-area: 1 / 1;
   display: block;
   object-fit: contain;
-  filter: var(--dot-filter);
 }
+.project-icon .icon-light { display: var(--light-only); }
+.project-icon .icon-dark { display: var(--dark-only); }
 .project-entry h3 {
   margin: 0;
   font-size: 1.1rem;

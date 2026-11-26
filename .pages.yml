@@ -28,6 +28,7 @@ content:
       - { name: group, label: 项目分组, type: string, description: 留空时归入 Current Focus }
       - { name: description, label: 简介, type: text }
       - { name: icon, label: 项目图标, type: image }
+      - { name: iconDark, label: 深色模式图标, type: image }
       - { name: url, label: 项目链接, type: string }
   - name: site
     label: 站点设置

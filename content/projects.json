@@ -2,14 +2,16 @@
   {
     "name": "GResume",
     "description": "支持协作编辑和投递跟踪的简历工具",
-    "icon": "/media/brands/gresume.svg",
+    "icon": "/media/projects/gresume.svg",
+    "iconDark": "/media/projects/gresume-dark.svg",
     "url": "https://github.com/506-FETL/resume"
   },
   {
     "name": "one-question-per-day",
     "group": "Platforms",
     "description": "506 实验室的前端每日一题练习平台",
-    "icon": "/media/brands/one-question-per-day.png",
+    "icon": "/media/projects/one-question-per-day.png",
+    "iconDark": "/media/projects/one-question-per-day-dark.png",
     "url": "https://github.com/506-FETL/one-question-per-day"
   },
   {
@@ -17,6 +19,7 @@
     "group": "UI Libraries",
     "description": "Element Plus 风格的 Vue 3 组件库",
     "icon": "/media/brands/se-element.svg",
+    "iconDark": "/media/projects/se-element-dark.svg",
     "url": "https://github.com/seaeam/se-element"
   },
   {
@@ -24,6 +27,7 @@
     "group": "Learning Resources",
     "description": "提供课程视频与逐节讲解的 ELPIS 在线学习站",
     "icon": "/media/brands/elpis-doc.svg",
+    "iconDark": "/media/projects/elpis-doc-dark.svg",
     "url": "https://github.com/seaeam/elips-doc"
   }
 ]
