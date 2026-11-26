@@ -1,28 +1,28 @@
 [
   {
     "name": "GResume",
-    "description": "按岗位调整简历，和朋友一起修改，跟进每次投递。",
+    "description": "支持协作编辑和投递跟踪的简历工具",
     "icon": "/media/brands/gresume.svg",
     "url": "https://github.com/506-FETL/resume"
   },
   {
     "name": "one-question-per-day",
     "group": "Platforms",
-    "description": "我为 506 实验室从零搭建的前端练习平台。成员可以练习 JavaScript、Vue 和 React，用单元测试验证解法，再对照彼此的实现。",
+    "description": "506 实验室的前端每日一题练习平台",
     "icon": "/media/brands/one-question-per-day.png",
     "url": "https://github.com/506-FETL/one-question-per-day"
   },
   {
     "name": "se-element",
     "group": "UI Libraries",
-    "description": "参考 Element Plus，用 Vue 3 和 TypeScript 实现的 UI 组件库，支持按需引入。",
+    "description": "Element Plus 风格的 Vue 3 组件库",
     "icon": "/media/brands/se-element.svg",
     "url": "https://github.com/seaeam/se-element"
   },
   {
     "name": "elpis-doc",
     "group": "Learning Resources",
-    "description": "学习 ELPIS 中后台框架时整理的在线笔记，从领域模型讲到如何用一份配置生成表格和表单。",
+    "description": "提供课程视频与逐节讲解的 ELPIS 在线学习站",
     "icon": "/media/brands/elpis-doc.svg",
     "url": "https://github.com/seaeam/elips-doc"
   }
