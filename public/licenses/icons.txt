@@ -8,3 +8,6 @@ Converge.AI　https://converge.ai/
 影视飓风　https://www.ysjf.com/
 GResume　https://github.com/506-FETL/resume/blob/main/public/favicon.svg
 one-question-per-day　https://github.com/506-FETL/one-question-per-day/blob/main/packages/docs/public/hero.svg
+
+Converge.AI 的 Covey、Framia 和 Combos 图标取自站主提供的产品截图，Enter 图标取自 https://enter.converge.ai/favicon.ico 。
+联系方式使用 Remix Icon 的 GitHub 和 Bilibili 图标，以及飞书官网图标 https://www.feishu.cn/favicon.ico 。

@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'DM Mono';
+  src: url('../assets/fonts/dm-mono-latin-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 .reading-column { width: 100%; max-width: 65ch; margin: 0 auto; color: var(--prose); line-height: 1.75; overflow-wrap: anywhere; }
 h1 { font-size: 2.25rem; font-weight: 800; color: var(--heading); line-height: 1.1111; margin: 0 0 .888889em; }
 h2 { font-size: 1.5rem; line-height: 1.3333; }
@@ -23,6 +30,7 @@ time { opacity: .5; font-size: .875rem; }
 .prose img { max-width: 100%; height: auto; }
 .prose :is(code, pre) { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
 .prose :not(pre) > code {
+  font-family: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   padding: .12em .35em;
   border-radius: .25em;
   background: #8882;
