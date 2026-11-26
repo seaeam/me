@@ -29,12 +29,6 @@ content:
       - { name: description, label: 简介, type: text }
       - { name: icon, label: 项目图标, type: image }
       - { name: url, label: 项目链接, type: string }
-      - name: resource
-        label: 在线资源
-        type: object
-        fields:
-          - { name: label, label: 链接文字, type: string }
-          - { name: url, label: 资源链接, type: string }
   - name: site
     label: 站点设置
     type: file
