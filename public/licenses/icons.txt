@@ -1,5 +1,5 @@
 导航图标来自 Remix Design 的 Remix Icon 和 Iconscout 的 Unicons，均采用 Apache License 2.0，见本目录的 apache-2.0.txt。
-项目页 GitHub 按钮使用 Phosphor Icons 图标，采用 MIT 许可，见本目录的 phosphor.txt。
+项目页的 GitHub 按钮、se-element 组件方块和 elpis-doc 书本图标使用 Phosphor Icons，采用 MIT 许可，见本目录的 phosphor.txt。
 
 首页品牌图标取自各自官网的网站图标。名称与标志归相应权利人所有。
 Converge.AI　https://converge.ai/
@@ -7,3 +7,4 @@ Converge.AI　https://converge.ai/
 字节跳动　https://www.bytedance.com/zh/
 影视飓风　https://www.ysjf.com/
 GResume　https://github.com/506-FETL/resume/blob/main/public/favicon.svg
+one-question-per-day　https://github.com/506-FETL/one-question-per-day/blob/main/packages/docs/public/hero.svg

@@ -186,7 +186,6 @@ const projectGroups = [...groups.values()]
   flex: none;
   margin-top: .5rem;
   filter: grayscale(1);
-  opacity: .5;
 }
 .project-icon img {
   display: block;

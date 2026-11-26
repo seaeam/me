@@ -6,24 +6,27 @@
     "url": "https://github.com/506-FETL/resume"
   },
   {
+    "name": "one-question-per-day",
+    "group": "Platforms",
+    "description": "我为 506 实验室从零搭建的前端练习平台。成员可以练习 JavaScript、Vue 和 React，用单元测试验证解法，再对照彼此的实现。",
+    "icon": "/media/brands/one-question-per-day.png",
+    "url": "https://github.com/506-FETL/one-question-per-day",
+    "resource": { "label": "浏览题库", "url": "https://506-fetl.github.io/one-question-per-day/" }
+  },
+  {
     "name": "se-element",
-    "group": "组件库",
+    "group": "UI Libraries",
     "description": "参考 Element Plus，用 Vue 3 和 TypeScript 实现的 UI 组件库，支持按需引入。",
+    "icon": "/media/brands/se-element.svg",
     "url": "https://github.com/seaeam/se-element",
     "resource": { "label": "查看组件示例", "url": "https://seaeam.github.io/se-element/" }
   },
   {
     "name": "elpis-doc",
-    "group": "学习资源",
+    "group": "Learning Resources",
     "description": "学习 ELPIS 中后台框架时整理的在线笔记，从领域模型讲到如何用一份配置生成表格和表单。",
+    "icon": "/media/brands/elpis-doc.svg",
     "url": "https://github.com/seaeam/elips-doc",
     "resource": { "label": "阅读学习笔记", "url": "https://elpis-doc.vercel.app/" }
-  },
-  {
-    "name": "one-question-per-day",
-    "group": "学习资源",
-    "description": "506 实验室的前端每日一题，涵盖 JavaScript 手写题和 Vue、React 练习，可以对照成员解法，用单元测试验证思路。",
-    "url": "https://github.com/506-FETL/one-question-per-day",
-    "resource": { "label": "浏览题库", "url": "https://506-fetl.github.io/one-question-per-day/" }
   }
 ]
