@@ -4,7 +4,14 @@ import { vContentLinks } from '@/lib/content-links'
 import { site } from '@/lib/site'
 import ProjectContents from './project-contents.vue'
 
-type Project = { name: string; group?: string; description?: string; icon?: string; url?: string }
+type Project = {
+  name: string
+  group?: string
+  description?: string
+  icon?: string
+  url?: string
+  resource?: { label?: string; url?: string }
+}
 const projects: Project[] = projectData
 const groups = new Map<string, { id: string; name: string; projects: Project[] }>()
 const ids = new Set<string>()
@@ -45,21 +52,23 @@ const projectGroups = [...groups.values()]
     <section v-for="group in projectGroups" :key="group.id" class="focus-section slide-enter" :aria-labelledby="group.id">
       <h2 :id="group.id">{{ group.name }}</h2>
       <div class="project-grid">
-        <component
-          :is="project.url ? 'a' : 'article'"
-          v-for="project in group.projects"
-          :key="project.name"
-          v-content-links="project.url"
-          :href="project.url || undefined"
-          class="project-entry">
+        <article v-for="project in group.projects" :key="project.name" class="project-entry">
           <span v-if="project.icon" class="project-icon" aria-hidden="true">
             <img :src="project.icon" alt="" width="36" height="36">
           </span>
           <div>
-            <h3>{{ project.name }}</h3>
+            <h3>
+              <a v-if="project.url" v-content-links="project.url" :href="project.url" class="project-link">{{ project.name }}</a>
+              <template v-else>{{ project.name }}</template>
+            </h3>
             <p v-if="project.description">{{ project.description }}</p>
+            <a
+              v-if="project.resource?.url && project.resource.label"
+              v-content-links="project.resource.url"
+              :href="project.resource.url"
+              class="resource-link">{{ project.resource.label }} <span aria-hidden="true">↗</span></a>
           </div>
-        </component>
+        </article>
       </div>
     </section>
 
@@ -142,6 +151,7 @@ const projectGroups = [...groups.values()]
   .project-grid { grid-template-columns: repeat(3, minmax(0, 350px)); }
 }
 .project-entry {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 1.25rem;
@@ -153,9 +163,24 @@ const projectGroups = [...groups.values()]
   opacity: .6;
   transition: opacity .2s ease-out, background-color .2s ease-out;
 }
-a.project-entry:is(:hover, :focus-visible) {
+.project-entry:has(a):is(:hover, :focus-within) {
   background: #8881;
   opacity: 1;
+}
+.project-link, .resource-link { color: inherit; }
+.project-link { text-decoration: none; }
+.project-link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+}
+.resource-link {
+  position: relative;
+  display: inline-block;
+  margin-top: .25rem;
+  font-size: .875rem;
+  text-underline-offset: .2em;
 }
 .project-icon {
   flex: none;
