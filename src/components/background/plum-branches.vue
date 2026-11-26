@@ -9,14 +9,17 @@ onMounted(() => {
   const ctx = canvas.getContext('2d')
   if (!ctx) return
   const motion = matchMedia('(prefers-reduced-motion: reduce)')
+  const touchViewport = navigator.maxTouchPoints > 0 || matchMedia('(any-pointer: coarse)').matches
   let frame = 0
   let lastSize = ''
 
   function fit() {
     const width = canvas.clientWidth
     const height = canvas.clientHeight
+    if (!width || !height) return
     const dpr = window.devicePixelRatio || 1
-    const size = [width, height, dpr, motion.matches].join('/')
+    // 手机工具栏伸缩会连续改变高度。保留已有位图和正在生长的枝梢，转屏改变宽度时再适配。
+    const size = [width, touchViewport ? null : height, dpr, motion.matches].join('/')
     if (size === lastSize) return
     lastSize = size
     cancelAnimationFrame(frame)
