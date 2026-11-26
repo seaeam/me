@@ -1,0 +1,9 @@
+导航图标来自 Remix Design 的 Remix Icon 和 Iconscout 的 Unicons，均采用 Apache License 2.0，见本目录的 apache-2.0.txt。
+项目页 GitHub 按钮使用 Phosphor Icons 图标，采用 MIT 许可，见本目录的 phosphor.txt。
+
+首页品牌图标取自各自官网的网站图标。名称与标志归相应权利人所有。
+Converge.AI　https://converge.ai/
+懂车帝　https://www.dongchedi.com/
+字节跳动　https://www.bytedance.com/zh/
+影视飓风　https://www.ysjf.com/
+GResume　https://github.com/506-FETL/resume/blob/main/public/favicon.svg

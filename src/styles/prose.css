@@ -1,0 +1,58 @@
+.reading-column { width: 100%; max-width: 65ch; margin: 0 auto; color: var(--prose); line-height: 1.75; overflow-wrap: anywhere; }
+h1 { font-size: 2.25rem; font-weight: 800; color: var(--heading); line-height: 1.1111; margin: 0 0 .888889em; }
+h2 { font-size: 1.5rem; line-height: 1.3333; }
+time { opacity: .5; font-size: .875rem; }
+.prose :is(h1, h2, h3, h4, h5, h6) {
+  margin-block: 1.6em .5em;
+  color: var(--heading);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.prose h1 { font-size: 2rem; }
+.prose h2 { font-size: 1.5rem; }
+.prose h3 { font-size: 1.25rem; }
+.prose h4 { font-size: 1.125rem; }
+.prose h5 { font-size: 1rem; }
+.prose h6 { font-size: .9375rem; }
+.prose :where(p, ul, ol, blockquote, pre, .table-scroll) { margin-block: 1.25em; }
+.prose :is(h1, h2, h3, h4, h5, h6) + p { margin-block-start: 0; }
+.prose :is(ul, ol) { padding-inline-start: 1.6em; }
+.prose li + li { margin-block-start: .35em; }
+.prose li > :is(ul, ol, p) { margin-block: .45em; }
+.prose strong { color: var(--heading); }
+.prose img { max-width: 100%; height: auto; }
+.prose :is(code, pre) { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.prose :not(pre) > code {
+  padding: .12em .35em;
+  border-radius: .25em;
+  background: #8882;
+  color: var(--heading);
+  font-size: .9em;
+}
+.prose pre {
+  overflow-x: auto;
+  padding: .9rem 1rem;
+  border: 1px solid #8883;
+  border-radius: .375rem;
+  background: #8881;
+  font-size: .875rem;
+  line-height: 1.6;
+  tab-size: 4;
+}
+.prose blockquote {
+  margin-inline: 0;
+  padding-inline-start: 1em;
+  border-inline-start: 3px solid #8886;
+  color: var(--ink);
+}
+.prose hr { margin-block: 2em; border: 0; border-block-start: 1px solid #8885; }
+.prose .table-scroll { overflow-x: auto; }
+.prose table { width: 100%; border-collapse: collapse; overflow-wrap: normal; font-size: .9375rem; }
+.prose :is(th, td) { padding: .5em .75em; border-block-end: 1px solid #8884; text-align: start; vertical-align: top; }
+.prose th { background: #8881; color: var(--heading); font-weight: 600; }
+.prose a { color: var(--heading); text-decoration: none; border-bottom: 1px solid #7d7d7d4d; transition: border-color .3s ease-in-out; }
+.prose a:hover { border-color: currentColor; }
+@keyframes slide-enter { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .slide-enter, .prose > * { animation: slide-enter 1s both; animation-delay: calc(var(--stage, 0) * var(--step, 90ms)); }
+}
