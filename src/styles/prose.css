@@ -29,8 +29,11 @@ time { opacity: .5; font-size: .875rem; }
 .prose strong { color: var(--heading); }
 .prose img { max-width: 100%; height: auto; }
 .prose :is(code, pre) { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.prose .mono,
 .prose :not(pre) > code {
   font-family: 'DM Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+.prose :not(pre) > code {
   padding: .12em .35em;
   border-radius: .25em;
   background: #8882;

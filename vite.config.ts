@@ -5,8 +5,9 @@ import UnoCSS from 'unocss/vite'
 import MarkdownIt from 'markdown-it'
 import frontMatter from 'front-matter'
 import { linkAttributes } from './src/lib/content-links'
+import { renderMarkdown } from './src/lib/markdown-issues'
 
-const markdown = new MarkdownIt({ html: false, linkify: true, typographer: true })
+const markdown = new MarkdownIt({ html: true, linkify: true, typographer: true })
 markdown.renderer.rules.table_open = () => '<div class="table-scroll"><table>\n'
 markdown.renderer.rules.table_close = () => '</table></div>\n'
 markdown.renderer.rules.link_open = (tokens, index, options, _env, renderer) => {
@@ -19,7 +20,7 @@ markdown.renderer.rules.link_open = (tokens, index, options, _env, renderer) => 
   return renderer.renderToken(tokens, index, options)
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -30,13 +31,14 @@ export default defineConfig({
   plugins: [
     {
       name: 'site-content',
-      transform(source, id) {
+      async transform(source, id) {
         if (!id.endsWith('.md')) return
         const { attributes, body } = frontMatter(source)
-        return { code: 'export default ' + JSON.stringify({ ...attributes, html: markdown.render(body) }), map: null }
+        const html = await renderMarkdown(markdown, body, command === 'build')
+        return { code: 'export default ' + JSON.stringify({ ...attributes, html }), map: null }
       },
     },
     vue(),
     UnoCSS(),
   ],
-})
+}))
