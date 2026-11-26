@@ -135,6 +135,8 @@ const projectGroups = [...groups.values()]
   font-size: clamp(2.25rem, 12vw, 5rem);
   font-weight: 700;
   line-height: 1;
+  -webkit-user-select: none;
+  user-select: none;
   overflow-wrap: anywhere;
 }
 .project-grid {
