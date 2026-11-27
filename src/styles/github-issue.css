@@ -131,7 +131,13 @@
   .github-issue[aria-busy='true'] .github-issue-icon {
     animation: issue-spin 0.9s linear infinite;
   }
-  .github-issue[aria-busy='false'] .github-issue-progress circle {
+  .github-issue:is(
+      [data-status='Todo'],
+      [data-status='In progress'],
+      [data-status='In review']
+    )
+    .github-issue-progress
+    circle {
     animation: issue-fill 0.52s ease-out;
   }
 }
