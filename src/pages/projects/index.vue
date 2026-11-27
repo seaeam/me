@@ -13,13 +13,20 @@ type Project = {
   url?: string
 }
 const projects: Project[] = projectData
-const groups = new Map<string, { id: string; name: string; projects: Project[] }>()
+const groups = new Map<
+  string,
+  { id: string; name: string; projects: Project[] }
+>()
 const ids = new Set<string>()
 for (const project of projects) {
   const name = project.group?.trim() || 'Current Focus'
   let group = groups.get(name)
   if (!group) {
-    const slug = name.toLowerCase().match(/[\p{L}\p{N}]+/gu)?.join('-') || 'group'
+    const slug =
+      name
+        .toLowerCase()
+        .match(/[\p{L}\p{N}]+/gu)
+        ?.join('-') || 'group'
     const base = name === 'Current Focus' ? 'current-focus' : 'projects-' + slug
     let id = base
     for (let suffix = 2; ids.has(id); suffix++) id = base + '-' + suffix
@@ -41,15 +48,21 @@ const projectGroups = [...groups.values()]
         v-if="site.github"
         v-content-links="site.github"
         :href="site.github"
-        class="github-button group">
-        <i class="i-ph-github-logo-duotone group-hover:i-ph-github-logo-fill group-focus-visible:i-ph-github-logo-fill" aria-hidden="true" />
+        class="project-button github-button group">
+        <i
+          class="i-ph-github-logo-duotone group-hover:i-ph-github-logo-fill group-focus-visible:i-ph-github-logo-fill"
+          aria-hidden="true" />
         GitHub
       </a>
-      <hr>
+      <hr />
     </header>
 
     <ProjectContents v-if="projectGroups.length" :groups="projectGroups" />
-    <section v-for="group in projectGroups" :key="group.id" class="focus-section slide-enter" :aria-labelledby="group.id">
+    <section
+      v-for="group in projectGroups"
+      :key="group.id"
+      class="focus-section slide-enter"
+      :aria-labelledby="group.id">
       <h2 :id="group.id">{{ group.name.replace(/\s+/g, '\n') }}</h2>
       <div class="project-grid">
         <component
@@ -60,8 +73,19 @@ const projectGroups = [...groups.values()]
           :href="project.url || undefined"
           class="project-entry">
           <span v-if="project.icon" class="project-icon" aria-hidden="true">
-            <img :src="project.icon" :class="{ 'icon-light': project.iconDark }" alt="" width="36" height="36">
-            <img v-if="project.iconDark" :src="project.iconDark" class="icon-dark" alt="" width="36" height="36">
+            <img
+              :src="project.icon"
+              :class="{ 'icon-light': project.iconDark }"
+              alt=""
+              width="36"
+              height="36" />
+            <img
+              v-if="project.iconDark"
+              :src="project.iconDark"
+              class="icon-dark"
+              alt=""
+              width="36"
+              height="36" />
           </span>
           <div>
             <h3>{{ project.name }}</h3>
@@ -70,6 +94,28 @@ const projectGroups = [...groups.values()]
         </component>
       </div>
     </section>
+
+    <aside
+      v-if="site.afdian"
+      class="reading-column project-sponsor"
+      aria-label="支持我的开源项目">
+      <hr />
+      <p>
+        If you enjoy my work and find it useful, consider supporting me and this
+        ecosystem. Thank you!
+      </p>
+      <div class="sponsor-actions">
+        <a
+          v-content-links="site.afdian"
+          :href="site.afdian"
+          class="project-button afdian-button group">
+          <i
+            class="i-ph-lightning-duotone group-hover:i-ph-lightning-fill group-focus-visible:i-ph-lightning-fill transition-all duration-200 ease-out"
+            aria-hidden="true" />
+          在爱发电上支持我
+        </a>
+      </div>
+    </aside>
 
     <footer class="project-footer">
       <RouterLink to="/" class="parent-link" aria-label="cd ..，返回首页">
@@ -92,24 +138,26 @@ const projectGroups = [...groups.values()]
   margin: 0;
 }
 .project-intro p {
-  margin: .5rem 0 0;
+  margin: 0.5rem 0 0;
   font-size: 1.125rem;
   font-style: italic;
   line-height: 1.75rem;
-  opacity: .5;
+  opacity: 0.5;
+}
+.project-button {
+  padding: 0.25rem 0.625rem;
+  border: 1px solid #8884;
+  border-radius: 0.25rem;
+  color: var(--heading);
+  line-height: 1.75rem;
+  text-decoration: none;
+  opacity: 0.5;
 }
 .github-button {
   display: inline-flex;
   align-items: center;
-  gap: .4em;
+  gap: 0.4em;
   margin-top: 2.5rem;
-  padding: .25rem .625rem;
-  border: 1px solid #8884;
-  border-radius: .25rem;
-  color: var(--heading);
-  line-height: 1.75rem;
-  text-decoration: none;
-  opacity: .5;
 }
 .github-button:is(:hover, :focus-visible) {
   background: rgb(96 165 250 / 10%);
@@ -133,7 +181,10 @@ const projectGroups = [...groups.values()]
   margin: 0 0 0 -1rem;
   color: transparent;
   -webkit-text-stroke: 1.5px rgb(170 170 170 / 35%);
-  -webkit-text-stroke-color: light-dark(rgb(170 170 170 / 35%), rgb(170 170 170 / 20%));
+  -webkit-text-stroke-color: light-dark(
+    rgb(170 170 170 / 35%),
+    rgb(170 170 170 / 20%)
+  );
   font-size: clamp(2.25rem, 12vw, 5rem);
   font-weight: 700;
   line-height: 1;
@@ -146,7 +197,7 @@ const projectGroups = [...groups.values()]
   grid-template-columns: minmax(0, 350px);
   justify-content: center;
   gap: 1rem;
-  padding-block: .5rem;
+  padding-block: 0.5rem;
 }
 @media (max-width: 767.98px) {
   .focus-section {
@@ -160,8 +211,8 @@ const projectGroups = [...groups.values()]
     align-self: start;
     margin-inline: -1rem;
     font-size: var(--group-title-size);
-    letter-spacing: -.025em;
-    line-height: .95;
+    letter-spacing: -0.025em;
+    line-height: 0.95;
     white-space: pre-line;
     overflow-wrap: normal;
     pointer-events: none;
@@ -174,22 +225,28 @@ const projectGroups = [...groups.values()]
   }
 }
 @media (min-width: 768px) {
-  .project-grid { grid-template-columns: repeat(2, minmax(0, 350px)); }
+  .project-grid {
+    grid-template-columns: repeat(2, minmax(0, 350px));
+  }
 }
 @media (min-width: 1024px) {
-  .project-grid { grid-template-columns: repeat(3, minmax(0, 350px)); }
+  .project-grid {
+    grid-template-columns: repeat(3, minmax(0, 350px));
+  }
 }
 .project-entry {
   display: flex;
   align-items: center;
   gap: 1.25rem;
   min-width: 0;
-  padding: .5rem .875rem .875rem;
+  padding: 0.5rem 0.875rem 0.875rem;
   border-radius: 6px;
   color: inherit;
   text-decoration: none;
-  opacity: .6;
-  transition: opacity .2s ease-out, background-color .2s ease-out;
+  opacity: 0.6;
+  transition:
+    opacity 0.2s ease-out,
+    background-color 0.2s ease-out;
 }
 a.project-entry:is(:hover, :focus-visible) {
   background: #8881;
@@ -206,8 +263,12 @@ a.project-entry:is(:hover, :focus-visible) {
   display: block;
   object-fit: contain;
 }
-.project-icon .icon-light { display: var(--light-only); }
-.project-icon .icon-dark { display: var(--dark-only); }
+.project-icon .icon-light {
+  display: var(--light-only);
+}
+.project-icon .icon-dark {
+  display: var(--dark-only);
+}
 .project-entry h3 {
   margin: 0;
   font-size: 1.1rem;
@@ -216,9 +277,37 @@ a.project-entry:is(:hover, :focus-visible) {
 }
 .project-entry p {
   margin: 0;
-  font-size: .875rem;
+  font-size: 0.875rem;
   line-height: 1.25rem;
-  opacity: .5;
+  opacity: 0.5;
+}
+.project-sponsor {
+  margin-top: 2.5rem;
+  padding-bottom: 1.25rem;
+  text-align: center;
+}
+.project-sponsor hr {
+  width: 3.125rem;
+  margin: 0 auto 2rem;
+  border: 0;
+  border-top: 1px solid #7d7d7d4d;
+}
+.project-sponsor p {
+  margin: 0 0 1.25rem;
+}
+.sponsor-actions {
+  display: flex;
+}
+.afdian-button {
+  display: inline-block;
+  border-color: rgb(136 136 136 / 27%);
+  transition: border 0.3s ease-in-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.afdian-button:is(:hover, :focus-visible) {
+  background: rgb(250 204 21 / 10%);
+  color: #facc15;
+  opacity: 1;
 }
 .project-footer {
   max-width: 65ch;
@@ -227,15 +316,15 @@ a.project-entry:is(:hover, :focus-visible) {
 .parent-link {
   display: inline-flex;
   align-items: baseline;
-  gap: .6em;
-  padding-block: .5rem;
+  gap: 0.6em;
+  padding-block: 0.5rem;
   color: color-mix(in srgb, var(--heading) 55%, var(--paper));
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   text-decoration: none;
 }
 .parent-link [aria-hidden] {
-  font-size: .85em;
-  opacity: .65;
+  font-size: 0.85em;
+  opacity: 0.65;
 }
 .parent-link span:last-child {
   border-bottom: 1px solid #8884;
@@ -247,6 +336,8 @@ a.project-entry:is(:hover, :focus-visible) {
   border-color: currentColor;
 }
 @media (prefers-reduced-motion: reduce) {
-  .project-entry { transition: none; }
+  .project-entry {
+    transition: none;
+  }
 }
 </style>

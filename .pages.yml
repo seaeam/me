@@ -40,3 +40,4 @@ content:
       - { name: projectsLabel, label: 项目导航文字, type: string, required: true }
       - { name: projectsIntro, label: 项目页简介, type: string }
       - { name: github, label: GitHub 主页, type: string }
+      - { name: afdian, label: 爱发电主页, type: string }

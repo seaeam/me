@@ -14,6 +14,8 @@ Hey！It's seam，重邮在读研三小前端，正在向全栈转型
 
 [issue](https://github.com/506-FETL/resume/issues/64)
 
+[issue](https://github.com/506-FETL/resume/issues/65)
+
 如果你使用过，觉得它们有用，或者有任何建议、想法或吐槽，欢迎 <span class="mono">pr</span>
 
 ## Find me on
