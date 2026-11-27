@@ -1,35 +1,56 @@
-.prose p:has(+ .github-issue-row) {
+.prose :where(p:has(+ .github-issue-row)) {
   margin-block-end: 0.4rem;
 }
 .prose .github-issue-row {
-  margin-block-start: 0.4rem;
+  display: flex;
+  margin-block: 0;
+  margin-inline-start: 0.4rem;
+  padding-inline-start: 0.85rem;
+  border-inline-start: 1px solid #8884;
 }
 .prose .github-issue {
   display: inline-grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto auto minmax(0, 1fr);
   align-items: center;
-  gap: 0.38rem;
+  gap: 0.5rem;
   max-width: 100%;
-  padding: 0.14rem 0.48rem;
+  min-height: 1.875rem;
   border: 0;
-  border-radius: 0.35rem;
-  background: #8881;
   color: var(--prose);
   font-size: 0.875rem;
   line-height: 1.55;
-  vertical-align: middle;
-}
-.prose .github-issue:is(:hover, :focus-visible) {
-  color: var(--heading);
-  background: #8882;
 }
 .github-issue-subject {
+  position: relative;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.github-issue-subject::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.github-issue:is(:hover, :focus-visible) .github-issue-subject {
+  color: var(--heading);
+}
+.github-issue:is(:hover, :focus-visible) .github-issue-subject::after {
+  transform: scaleX(1);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .github-issue-subject {
+    transition: color 220ms ease;
+  }
+  .github-issue-subject::after {
+    transition: transform 220ms ease-in-out;
+  }
+}
 .github-issue-ref {
-  color: light-dark(#666, #aaa);
+  color: light-dark(#737373, #999);
   font-size: 0.75rem;
 }
 .github-issue-icon {

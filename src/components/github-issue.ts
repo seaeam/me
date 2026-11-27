@@ -66,8 +66,8 @@ export function GitHubIssue({
           ],
         ),
       ]),
-      h('span', { class: 'github-issue-subject' }, title),
       h('span', { class: 'github-issue-ref mono' }, `#${number}`),
+      h('span', { class: 'github-issue-subject' }, title),
     ],
   )
 }

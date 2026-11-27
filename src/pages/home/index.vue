@@ -29,6 +29,29 @@ import { site } from '@/lib/site'
 .home-copy p {
   line-height: 1.95;
 }
+.home-label {
+  white-space: nowrap;
+}
+.home-label i {
+  width: 1.1em;
+  height: 1.1em;
+  margin-inline-end: 0.4em;
+  vertical-align: -0.15em;
+  opacity: 0.8;
+}
+.home-copy ul:has(> li > .home-label) {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0;
+  list-style: none;
+}
+.home-copy li:has(> .home-label) {
+  display: grid;
+  grid-template-columns: 5.25rem minmax(0, 1fr);
+  column-gap: 0.5rem;
+  margin: 0;
+  word-break: keep-all;
+}
 .home-copy p a:has(> img) {
   display: inline-flex;
   align-items: center;
