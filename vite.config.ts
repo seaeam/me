@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process'
+import { relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { defineConfig, loadEnv, type Plugin, type ViteDevServer } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -7,13 +8,14 @@ import MarkdownIt from 'markdown-it'
 import frontMatter from 'front-matter'
 import { linkAttributes } from './src/lib/content-links'
 import { renderMarkdown } from './src/lib/markdown-issues'
-import { homeIssueResponse } from './server/github-issues'
+import { githubIssuesResponse } from './server/project-issues'
+import { markdownProjects } from './server/markdown-projects'
 
 const markdown = new MarkdownIt({
   html: true,
   linkify: true,
   typographer: true,
-})
+}).use(markdownProjects)
 markdown.renderer.rules.table_open = () => '<div class="table-scroll"><table>\n'
 markdown.renderer.rules.table_close = () => '</table></div>\n'
 markdown.renderer.rules.link_open = (
@@ -62,7 +64,8 @@ function siteContent(mode: string): Plugin {
           res.writeHead(405, { Allow: 'GET' }).end()
           return
         }
-        const response = await homeIssueResponse(githubToken)
+        const { searchParams } = new URL(req.url ?? '/', 'http://localhost')
+        const response = await githubIssuesResponse(searchParams, githubToken)
         res.writeHead(response.status, Object.fromEntries(response.headers))
         res.end(await response.text())
       } catch (error) {
@@ -78,12 +81,18 @@ function siteContent(mode: string): Plugin {
       const liveIssues = id.endsWith('.md?live-issues')
       if (!liveIssues && !id.endsWith('.md')) return
       const { attributes, body } = frontMatter<Record<string, unknown>>(source)
-      const html = await renderMarkdown(markdown, body, {
+      const content = await renderMarkdown(markdown, body, {
         liveIssues,
         githubToken,
       })
       return {
-        code: 'export default ' + JSON.stringify({ ...attributes, html }),
+        code:
+          'export default ' +
+          JSON.stringify({
+            ...attributes,
+            ...content,
+            source: relative(resolve('content'), id.split('?')[0]),
+          }),
         map: null,
       }
     },

@@ -1,5 +1,5 @@
 declare module '*.md' {
-  const page: { html: string }
+  const page: import('./lib/markdown-content').MarkdownContent
   export default page
 }
 

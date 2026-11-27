@@ -1,8 +1,12 @@
-import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import MarkdownIt from 'markdown-it'
 import type Token from 'markdown-it/lib/token.mjs'
-import { parseIssueLink, type IssueDetails } from '../src/lib/github-issues.js'
+import {
+  githubRequest,
+  parseIssueLink,
+  type IssueDetails,
+} from '../src/lib/github-issues.js'
+import { cachedSnapshot, type SnapshotCache } from './github-cache.js'
 
 export function issueParagraphs(tokens: Token[]) {
   return tokens.flatMap((token, index) => {
@@ -38,69 +42,45 @@ export function issueParagraphs(tokens: Token[]) {
 }
 
 const ttlSeconds = 60 * 60
-type IssueSnapshot = IssueDetails & { expiresAt: number }
-type CacheEntry = {
-  request: Promise<IssueSnapshot | undefined>
-  expiresAt: number
-}
-// ViteSSG loads the config twice in one process. Share the authenticated snapshot across both bundles.
+// ViteSSG loads its config twice. Both builds must render the same snapshot.
 const runtime = globalThis as typeof globalThis & {
-  siteGithubIssues?: Map<string, CacheEntry>
+  siteGithubIssues?: SnapshotCache<IssueDetails>
 }
-const cache = (runtime.siteGithubIssues ??= new Map<string, CacheEntry>())
+const cache = (runtime.siteGithubIssues ??= new Map())
 
-async function requestIssue(
+export async function fetchIssue(
   repository: string,
   number: string,
   token?: string,
-): Promise<IssueSnapshot | undefined> {
+) {
+  const path = `${repository}/issues/${number}`
   try {
-    const response = await fetch(
-      `https://api.github.com/repos/${repository}/issues/${number}`,
-      {
-        headers: {
-          Accept: 'application/vnd.github+json',
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        signal: AbortSignal.timeout(5000),
-        redirect: 'error',
+    const snapshot = await cachedSnapshot(
+      cache,
+      path.toLowerCase(),
+      token,
+      ttlSeconds,
+      async () => {
+        const response = await githubRequest(path, token)
+        const data = await response.json()
+        if (typeof data.title !== 'string')
+          throw new Error('Missing issue title')
+        return {
+          title: data.title,
+          status:
+            typeof data.status?.name === 'string'
+              ? data.status.name
+              : 'No status',
+        }
       },
     )
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
-    const data = await response.json()
-    if (typeof data.title !== 'string') throw new Error('Missing issue title')
-    return {
-      title: data.title,
-      status:
-        typeof data.status?.name === 'string' ? data.status.name : 'No status',
-      expiresAt: Date.now() + ttlSeconds * 1000,
-    }
+    return { ...snapshot.value, expiresAt: snapshot.expiresAt }
   } catch (error) {
     console.warn(
-      `[github-issue] ${repository}#${number}:`,
+      `[github-issue] ${path}:`,
       error instanceof Error ? error.message : error,
     )
   }
-}
-
-export function fetchIssue(repository: string, number: string, token?: string) {
-  const account = token
-    ? createHash('sha256').update(token).digest('hex')
-    : 'anonymous'
-  const key = `${account}:${repository.toLowerCase()}#${number}`
-  const cached = cache.get(key)
-  if (cached && Date.now() < cached.expiresAt) return cached.request
-
-  const entry = {
-    request: requestIssue(repository, number, token),
-    expiresAt: Infinity,
-  }
-  cache.set(key, entry)
-  void entry.request.then((issue) => {
-    if (issue) entry.expiresAt = issue.expiresAt
-    else cache.delete(key)
-  })
-  return entry.request
 }
 
 const markdown = new MarkdownIt({ linkify: true })

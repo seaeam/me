@@ -1,5 +1,8 @@
-import { homeIssueResponse } from '../server/github-issues.js'
+import { githubIssuesResponse } from '../server/project-issues.js'
 
-export function GET() {
-  return homeIssueResponse(process.env.GITHUB_TOKEN)
+export function GET(request: Request) {
+  return githubIssuesResponse(
+    new URL(request.url).searchParams,
+    process.env.GITHUB_TOKEN,
+  )
 }

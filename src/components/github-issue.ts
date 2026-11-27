@@ -73,7 +73,8 @@ export function GitHubIssue({
 }
 
 export const vLiveIssues: ObjectDirective<HTMLElement> = {
-  async mounted(element) {
+  async mounted(element, binding) {
+    if (binding.value === false) return
     const cards = element.querySelectorAll<HTMLAnchorElement>('a.github-issue')
     if (!cards.length) return
     const issues = await fetchHomeIssues()

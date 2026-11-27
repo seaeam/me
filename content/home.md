@@ -9,11 +9,7 @@ Hey！It's seam，重邮在读研三小前端，正在向全栈转型
 
 过往实习　[![](/media/brands/dongchedi.png) 懂车帝](https://www.dongchedi.com/) [![](/media/brands/bytedance.png) 字节跳动](https://www.bytedance.com/zh/) [![](/media/brands/mediastorm.svg) 影视飓风](https://www.ysjf.com/)
 
-最近在做 [![](/media/brands/gresume.svg) GResume](https://github.com/506-FETL/resume)
-
-[issue](https://github.com/506-FETL/resume/issues/64)
-
-[issue](https://github.com/506-FETL/resume/issues/65)
+最近在做：<GitHubProject repo="506-FETL/resume" name="GResume" icon="/media/brands/gresume.svg"  show-issues />
 
 如果你使用过，觉得它们有用，或者有任何建议、想法或吐槽，欢迎 <span class="mono">pr</span>
 

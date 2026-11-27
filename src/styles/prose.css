@@ -156,3 +156,42 @@ time {
     animation-delay: calc(var(--stage, 0) * var(--step, 90ms));
   }
 }
+
+.home-copy p a:has(> img),
+.github-project .repo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  padding: 0.08em 0.42em;
+  border: 0;
+  border-radius: 0.28em;
+  background: #8882;
+  color: var(--prose);
+  font-size: 0.95em;
+  line-height: 1.55;
+  vertical-align: -0.12em;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+.home-copy p a:has(> img):is(:hover, :focus-visible),
+.github-project .repo-link:is(:hover, :focus-visible) {
+  background: #8883;
+  color: var(--heading);
+}
+.home-copy p a > img,
+.github-project .repo-link > img {
+  width: 1.1em;
+  height: 1.1em;
+  border-radius: 0.18em;
+  object-fit: contain;
+}
+@media (max-width: 480px) {
+  .home-copy p a:has(> img),
+  .github-project .repo-link {
+    font-size: 0.875em;
+    padding-inline: 0.3em;
+    gap: 0.2em;
+  }
+}

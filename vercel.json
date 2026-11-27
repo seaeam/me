@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
   "functions": {
-    "api/github-issues.ts": { "includeFiles": "content/home.md" }
+    "api/github-issues.ts": { "includeFiles": "content/{home.md,posts/*.md}" }
   },
   "buildCommand": "npm run build",
   "outputDirectory": "dist"

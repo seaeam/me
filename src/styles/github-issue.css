@@ -64,6 +64,7 @@
 }
 .github-issue:is(
     [aria-busy='true'],
+    [data-status='Open'],
     [data-status='Backlog'],
     [data-status='Todo'],
     [data-status='In progress'],

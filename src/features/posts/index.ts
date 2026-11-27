@@ -1,7 +1,8 @@
-export type Article = {
+import type { MarkdownContent } from '@/lib/markdown-content'
+
+export type Article = MarkdownContent & {
   title: string
   date: string
-  html: string
   slug: string
   duration?: string
 }
