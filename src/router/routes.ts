@@ -18,7 +18,7 @@ export const routes: RouteRecordRaw[] = [
     component: ProjectsPage,
     meta: { title: sections.projects.label, art: 'dots' },
   },
-  ...posts.map(post => ({
+  ...posts.map((post) => ({
     path: postPath(post.slug),
     component: PostPage,
     props: { post },

@@ -12,7 +12,7 @@ content:
     label: 文章
     type: collection
     path: content/posts
-    filename: "{primary}.md"
+    filename: '{primary}.md'
     fields:
       - { name: title, label: 标题, type: string, required: true }
       - { name: date, label: 发布日期, type: date, required: true }
@@ -25,7 +25,12 @@ content:
     list: true
     fields:
       - { name: name, label: 名称, type: string, required: true }
-      - { name: group, label: 项目分组, type: string, description: 留空时归入 Current Focus }
+      - {
+          name: group,
+          label: 项目分组,
+          type: string,
+          description: 留空时归入 Current Focus,
+        }
       - { name: description, label: 简介, type: text }
       - { name: icon, label: 项目图标, type: image }
       - { name: iconDark, label: 深色模式图标, type: image }
@@ -37,7 +42,12 @@ content:
     fields:
       - { name: name, label: 站名, type: string, required: true }
       - { name: blogLabel, label: 文章导航文字, type: string, required: true }
-      - { name: projectsLabel, label: 项目导航文字, type: string, required: true }
+      - {
+          name: projectsLabel,
+          label: 项目导航文字,
+          type: string,
+          required: true,
+        }
       - { name: projectsIntro, label: 项目页简介, type: string }
       - { name: github, label: GitHub 主页, type: string }
       - { name: afdian, label: 爱发电主页, type: string }

@@ -9,7 +9,8 @@ onMounted(() => {
   const ctx = canvas.getContext('2d')
   if (!ctx) return
   const motion = matchMedia('(prefers-reduced-motion: reduce)')
-  const touchViewport = navigator.maxTouchPoints > 0 || matchMedia('(any-pointer: coarse)').matches
+  const touchViewport =
+    navigator.maxTouchPoints > 0 || matchMedia('(any-pointer: coarse)').matches
   let frame = 0
   let lastSize = ''
 
@@ -19,7 +20,12 @@ onMounted(() => {
     if (!width || !height) return
     const dpr = window.devicePixelRatio || 1
     // 手机工具栏伸缩会连续改变高度。保留已有位图和正在生长的枝梢，转屏改变宽度时再适配。
-    const size = [width, touchViewport ? null : height, dpr, motion.matches].join('/')
+    const size = [
+      width,
+      touchViewport ? null : height,
+      dpr,
+      motion.matches,
+    ].join('/')
     if (size === lastSize) return
     lastSize = size
     cancelAnimationFrame(frame)
@@ -35,7 +41,10 @@ onMounted(() => {
       if (motion.matches) {
         const until = performance.now() + 7
         do {
-          if (!advance()) { canvas.style.visibility = 'visible'; return }
+          if (!advance()) {
+            canvas.style.visibility = 'visible'
+            return
+          }
         } while (performance.now() < until)
       } else if (now - last >= 1000 / 40) {
         last = now
@@ -58,4 +67,6 @@ onMounted(() => {
 onUnmounted(() => dispose?.())
 </script>
 
-<template><canvas ref="surface" aria-hidden="true" class="plum-canvas" /></template>
+<template>
+  <canvas ref="surface" aria-hidden="true" class="plum-canvas" />
+</template>

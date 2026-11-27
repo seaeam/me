@@ -22,7 +22,10 @@ const sectionIcons = {
           :aria-label="item.label"
           :title="item.label"
           class="nav-link">
-          <i class="section-icon" :class="sectionIcons[key]" aria-hidden="true" />
+          <i
+            class="section-icon"
+            :class="sectionIcons[key]"
+            aria-hidden="true" />
           <span class="section-label">{{ item.label }}</span>
         </RouterLink>
         <a
@@ -72,7 +75,9 @@ const sectionIcons = {
 .nav-link:focus-visible {
   opacity: 1;
 }
-.nav-link .section-icon { display: none; }
+.nav-link .section-icon {
+  display: none;
+}
 .theme-toggle .sun {
   display: var(--light-only);
 }
@@ -80,19 +85,29 @@ const sectionIcons = {
   display: var(--dark-only);
 }
 @media (max-width: 767.98px) {
-  .site-header .signature { top: 10px; }
-  .site-header nav {
-    padding: .75rem 1rem;
+  .site-header .signature {
+    top: 10px;
   }
-  .nav-items { gap: 0; }
+  .site-header nav {
+    padding: 0.75rem 1rem;
+  }
+  .nav-items {
+    gap: 0;
+  }
   .nav-link {
     display: grid;
     place-items: center;
     width: 44px;
     height: 44px;
   }
-  .nav-link .section-label { display: none; }
-  .nav-link .section-icon { display: block; }
-  .nav-link[aria-current="page"] { opacity: 1; }
+  .nav-link .section-label {
+    display: none;
+  }
+  .nav-link .section-icon {
+    display: block;
+  }
+  .nav-link[aria-current='page'] {
+    opacity: 1;
+  }
 }
 </style>

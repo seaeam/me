@@ -7,59 +7,166 @@
 }
 :root {
   color-scheme: light;
-  --light-paper: #fff; --dark-paper: #050505;
-  --paper: var(--light-paper); --ink: #374151; --prose: #555; --heading: #000; --pen: #303030;
+  --light-paper: #fff;
+  --dark-paper: #050505;
+  --paper: var(--light-paper);
+  --ink: #374151;
+  --prose: #555;
+  --heading: #000;
+  --pen: #303030;
   --dot-filter: none;
-  --light-only: inline-block; --dark-only: none;
-  font: 400 16px/1.5 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --light-only: inline-block;
+  --dark-only: none;
+  font:
+    400 16px/1.5 Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'PingFang SC',
+    'Microsoft YaHei',
+    'Noto Sans CJK SC',
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    'Noto Sans',
+    sans-serif;
 }
-:root[data-theme="dark"] {
+:root[data-theme='dark'] {
   color-scheme: dark;
-  --paper: var(--dark-paper); --ink: #e5e7eb; --prose: #bbb; --heading: #fff; --pen: #fdfdfd;
+  --paper: var(--dark-paper);
+  --ink: #e5e7eb;
+  --prose: #bbb;
+  --heading: #fff;
+  --pen: #fdfdfd;
   --dot-filter: invert(1);
-  --light-only: none; --dark-only: inline-block;
+  --light-only: none;
+  --dark-only: inline-block;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme='light']) {
     color-scheme: dark;
-    --paper: var(--dark-paper); --ink: #e5e7eb; --prose: #bbb; --heading: #fff; --pen: #fdfdfd;
+    --paper: var(--dark-paper);
+    --ink: #e5e7eb;
+    --prose: #bbb;
+    --heading: #fff;
+    --pen: #fdfdfd;
     --dot-filter: invert(1);
-  --light-only: none; --dark-only: inline-block;
+    --light-only: none;
+    --dark-only: inline-block;
   }
 }
-*, *::before, *::after { box-sizing: border-box; }
-html { margin: 0; background: var(--paper); color: var(--ink); overflow-x: hidden; overflow-y: scroll; }
-body { margin: 0; min-height: 100svh; }
-#app { display: flex; flex-direction: column; min-height: 100svh; }
-::selection { background: #8884; }
-a { color: inherit; }
-button { font: inherit; color: inherit; border: 0; padding: 0; background: transparent; cursor: pointer; }
-:focus-visible { outline: 1.5px solid currentColor; outline-offset: 4px; }
-.skip-link { position: fixed; z-index: 99; top: 0; left: 50%; padding: .65rem 1rem; transform: translate(-50%, -150%); background: var(--paper); }
-.skip-link:focus { transform: translate(-50%, .35rem); }
-#main { position: relative; z-index: 1; padding: 2.5rem 1.75rem; overflow-x: hidden; }
-#main:focus { outline: none; }
-::view-transition-old(root), ::view-transition-new(root) {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+body {
+  margin: 0;
+  min-height: 100svh;
+}
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+::selection {
+  background: #8884;
+}
+a {
+  color: inherit;
+}
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 1.5px solid currentColor;
+  outline-offset: 4px;
+}
+.skip-link {
+  position: fixed;
+  z-index: 99;
+  top: 0;
+  left: 50%;
+  padding: 0.65rem 1rem;
+  transform: translate(-50%, -150%);
+  background: var(--paper);
+}
+.skip-link:focus {
+  transform: translate(-50%, 0.35rem);
+}
+#main {
+  position: relative;
+  z-index: 1;
+  padding: 2.5rem 1.75rem;
+  overflow-x: hidden;
+}
+#main:focus {
+  outline: none;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
   background-color: var(--dark-paper);
   z-index: 1;
 }
 /* 浅色快照始终在上层，从过渡的第一帧就按点击位置裁剪。 */
-:root[data-theme="light"]::view-transition-new(root),
-:root[data-theme="dark"]::view-transition-old(root) {
+:root[data-theme='light']::view-transition-new(root),
+:root[data-theme='dark']::view-transition-old(root) {
   background-color: var(--light-paper);
   z-index: 2;
   animation: theme-circle 400ms ease-out both;
 }
 @keyframes theme-circle {
-  from { clip-path: var(--theme-clip-from); }
-  to { clip-path: var(--theme-clip-to); }
+  from {
+    clip-path: var(--theme-clip-from);
+  }
+  to {
+    clip-path: var(--theme-clip-to);
+  }
 }
 @media (prefers-reduced-motion: no-preference) {
-  html:has(.project-toc) { scroll-behavior: smooth; }
-  .theme-fade { transition: background-color 400ms ease-out, color 400ms ease-out; }
+  html:has(.project-toc) {
+    scroll-behavior: smooth;
+  }
+  .theme-fade {
+    transition:
+      background-color 400ms ease-out,
+      color 400ms ease-out;
+  }
 }
-#nprogress { pointer-events: none; }
-#nprogress .bar { position: fixed; top: 0; left: 0; z-index: 99; width: 100%; height: 2px; background: #888; opacity: .75; }
-@media print { .site-header, .plum-canvas, .dot-field, .skip-link { display: none; } }
+#nprogress {
+  pointer-events: none;
+}
+#nprogress .bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99;
+  width: 100%;
+  height: 2px;
+  background: #888;
+  opacity: 0.75;
+}
+@media print {
+  .site-header,
+  .plum-canvas,
+  .dot-field,
+  .skip-link {
+    display: none;
+  }
+}

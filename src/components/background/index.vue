@@ -13,8 +13,14 @@ const route = useRoute()
 </template>
 
 <style>
-.dot-field, .plum-canvas {
-  display: block; position: fixed; z-index: 0; inset: 0; width: 100%; height: 100%;
+.dot-field,
+.plum-canvas {
+  display: block;
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
 }
 .plum-canvas {
@@ -23,5 +29,7 @@ const route = useRoute()
   height: 100lvh;
   mask-image: radial-gradient(circle, transparent, black);
 }
-.dot-field { filter: var(--dot-filter); }
+.dot-field {
+  filter: var(--dot-filter);
+}
 </style>

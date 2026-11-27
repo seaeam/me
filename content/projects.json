@@ -9,7 +9,7 @@
   {
     "name": "one-question-per-day",
     "group": "Platforms",
-    "description": "506 实验室的前端每日一题练习平台",
+    "description": "前端每日一题练习平台",
     "icon": "/media/projects/one-question-per-day.png",
     "iconDark": "/media/projects/one-question-per-day-dark.png",
     "url": "https://github.com/506-FETL/one-question-per-day"
@@ -25,7 +25,7 @@
   {
     "name": "elpis-doc",
     "group": "Learning Resources",
-    "description": "提供课程视频与逐节讲解的 ELPIS 在线学习站",
+    "description": "课程视频与逐节讲解的 ELPIS 在线学习站",
     "icon": "/media/brands/elpis-doc.svg",
     "iconDark": "/media/projects/elpis-doc-dark.svg",
     "url": "https://github.com/seaeam/elips-doc"

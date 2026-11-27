@@ -11,7 +11,7 @@ onMounted(() => {
   if (!ctx) return
   const noise = createNoise3D()
   const motion = matchMedia('(prefers-reduced-motion: reduce)')
-  const points: { x: number, y: number, alpha: number }[] = []
+  const points: { x: number; y: number; alpha: number }[] = []
   let frame = 0
   function paint() {
     cancelAnimationFrame(frame)
@@ -19,17 +19,25 @@ onMounted(() => {
     const t = Date.now() / 10000
     ctx!.fillStyle = '#ccc'
     for (const p of points) {
-      const angle = (noise(p.x / 200, p.y / 200, t) - .5) * 2 * Math.PI
-      const distance = (noise(p.x / 200, p.y / 200, t * 2) + .5) * 5
-      ctx!.globalAlpha = (Math.abs(Math.cos(angle)) * .8 + .2) * p.alpha
+      const angle = (noise(p.x / 200, p.y / 200, t) - 0.5) * 2 * Math.PI
+      const distance = (noise(p.x / 200, p.y / 200, t * 2) + 0.5) * 5
+      ctx!.globalAlpha = (Math.abs(Math.cos(angle)) * 0.8 + 0.2) * p.alpha
       ctx!.beginPath()
-      ctx!.arc(p.x + Math.cos(angle) * distance, p.y + Math.sin(angle) * distance, 1, 0, Math.PI * 2)
+      ctx!.arc(
+        p.x + Math.cos(angle) * distance,
+        p.y + Math.sin(angle) * distance,
+        1,
+        0,
+        Math.PI * 2,
+      )
       ctx!.fill()
     }
-    if (!motion.matches && !document.hidden) frame = requestAnimationFrame(paint)
+    if (!motion.matches && !document.hidden)
+      frame = requestAnimationFrame(paint)
   }
   function resize() {
-    const width = canvas.clientWidth, height = canvas.clientHeight
+    const width = canvas.clientWidth,
+      height = canvas.clientHeight
     const dpr = window.devicePixelRatio || 1
     canvas.width = Math.round(width * dpr)
     canvas.height = Math.round(height * dpr)
@@ -37,7 +45,7 @@ onMounted(() => {
     points.length = 0
     for (let x = -7.5; x < width + 15; x += 15) {
       for (let y = -7.5; y < height + 15; y += 15) {
-        points.push({ x, y, alpha: .5 + Math.random() * .5 })
+        points.push({ x, y, alpha: 0.5 + Math.random() * 0.5 })
       }
     }
     paint()
@@ -55,4 +63,6 @@ onMounted(() => {
 })
 onUnmounted(() => dispose?.())
 </script>
-<template><canvas ref="surface" aria-hidden="true" class="dot-field"/></template>
+<template>
+  <canvas ref="surface" aria-hidden="true" class="dot-field" />
+</template>

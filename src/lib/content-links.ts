@@ -8,15 +8,19 @@ export function linkAttributes(href: string, origin = 'https://site.invalid') {
   } catch {
     return {}
   }
-  if ((url.protocol === 'https:' || url.protocol === 'http:') && url.origin !== origin)
+  if (
+    (url.protocol === 'https:' || url.protocol === 'http:') &&
+    url.origin !== origin
+  )
     return { target: '_blank', rel: 'noopener' }
   return {}
 }
 
 function updateLinks(element: HTMLElement) {
-  const links = element instanceof HTMLAnchorElement
-    ? [element]
-    : element.querySelectorAll<HTMLAnchorElement>('a[href]')
+  const links =
+    element instanceof HTMLAnchorElement
+      ? [element]
+      : element.querySelectorAll<HTMLAnchorElement>('a[href]')
   for (const link of links) {
     const { target, rel } = linkAttributes(link.href, window.location.origin)
     if (target && rel) {
@@ -32,5 +36,5 @@ function updateLinks(element: HTMLElement) {
 export const vContentLinks: ObjectDirective<HTMLElement, string | undefined> = {
   mounted: updateLinks,
   updated: updateLinks,
-  getSSRProps: ({ value }) => value ? linkAttributes(value) : {},
+  getSSRProps: ({ value }) => (value ? linkAttributes(value) : {}),
 }

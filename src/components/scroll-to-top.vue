@@ -8,7 +8,9 @@ function updateVisibility() {
 }
 
 function scrollToTop() {
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const reduceMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)',
+  ).matches
   window.scrollTo({ top: 0, behavior: reduceMotion ? 'instant' : 'smooth' })
 }
 
@@ -26,8 +28,7 @@ onUnmounted(() => window.removeEventListener('scroll', updateVisibility))
     title="Scroll to top"
     aria-label="返回顶部"
     :disabled="!visible"
-    @click="scrollToTop"
-  >
+    @click="scrollToTop">
     <i class="i-ri-arrow-up-line" aria-hidden="true" />
   </button>
 </template>
@@ -36,13 +37,15 @@ onUnmounted(() => window.removeEventListener('scroll', updateVisibility))
 .scroll-to-top {
   position: fixed;
   z-index: 100;
-  right: .75rem;
-  bottom: .75rem;
+  right: 0.75rem;
+  bottom: 0.75rem;
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
-  opacity: .3;
-  transition: opacity .3s cubic-bezier(.4, 0, .2, 1), background-color .3s cubic-bezier(.4, 0, .2, 1);
+  opacity: 0.3;
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .scroll-to-top:enabled:is(:hover, :focus-visible) {
   background-color: #8883;
@@ -53,9 +56,13 @@ onUnmounted(() => window.removeEventListener('scroll', updateVisibility))
   pointer-events: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .scroll-to-top { transition: none; }
+  .scroll-to-top {
+    transition: none;
+  }
 }
 @media print {
-  .scroll-to-top { display: none; }
+  .scroll-to-top {
+    display: none;
+  }
 }
 </style>

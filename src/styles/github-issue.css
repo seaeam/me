@@ -1,17 +1,21 @@
-.prose p:has(+ .github-issue-row) { margin-block-end: .4rem; }
-.prose .github-issue-row { margin-block-start: .4rem; }
+.prose p:has(+ .github-issue-row) {
+  margin-block-end: 0.4rem;
+}
+.prose .github-issue-row {
+  margin-block-start: 0.4rem;
+}
 .prose .github-issue {
   display: inline-grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: .38rem;
+  gap: 0.38rem;
   max-width: 100%;
-  padding: .14rem .48rem;
+  padding: 0.14rem 0.48rem;
   border: 0;
-  border-radius: .35rem;
+  border-radius: 0.35rem;
   background: #8881;
   color: var(--prose);
-  font-size: .875rem;
+  font-size: 0.875rem;
   line-height: 1.55;
   vertical-align: middle;
 }
@@ -26,32 +30,56 @@
 }
 .github-issue-ref {
   color: light-dark(#666, #aaa);
-  font-size: .75rem;
+  font-size: 0.75rem;
 }
 .github-issue-icon {
   display: grid;
   place-items: center;
-  width: .875rem;
-  height: .875rem;
+  width: 0.875rem;
+  height: 0.875rem;
   border: 1.5px solid currentColor;
   border-radius: 50%;
   color: light-dark(#687078, #989fa6);
 }
-.github-issue:is([data-status="Backlog"], [data-status="Todo"], [data-status="In progress"], [data-status="In review"]) .github-issue-icon {
+.github-issue:is(
+    [aria-busy='true'],
+    [data-status='Backlog'],
+    [data-status='Todo'],
+    [data-status='In progress'],
+    [data-status='In review']
+  )
+  .github-issue-icon {
   color: light-dark(#1a7f37, #56c470);
 }
-.github-issue[data-status="Todo"] { --issue-progress: 25%; }
-.github-issue[data-status="In progress"] { --issue-progress: 50%; }
-.github-issue[data-status="In review"] { --issue-progress: 75%; }
-.github-issue-icon::after {
-  content: '';
+.github-issue[aria-busy='true'] .github-issue-icon {
+  border-color: color-mix(in srgb, currentColor 32%, transparent);
+  border-top-color: currentColor;
+}
+.github-issue[data-status='Todo'] {
+  --issue-progress: 25;
+}
+.github-issue[data-status='In progress'] {
+  --issue-progress: 50;
+}
+.github-issue[data-status='In review'] {
+  --issue-progress: 75;
+}
+.github-issue-progress {
+  grid-area: 1 / 1;
   width: 70%;
   height: 70%;
-  border-radius: 50%;
-  background: conic-gradient(currentColor var(--issue-progress, 0%), transparent 0);
 }
-.github-issue[data-status="Done"] .github-issue-icon { color: light-dark(#8250df, #ab7df8); }
-.github-issue[data-status="Done"] .github-issue-icon::after {
+.github-issue-progress circle {
+  stroke-dashoffset: calc(100 - var(--issue-progress, 0));
+}
+.github-issue-icon::after {
+  content: '';
+  grid-area: 1 / 1;
+}
+.github-issue[data-status='Done'] .github-issue-icon {
+  color: light-dark(#8250df, #ab7df8);
+}
+.github-issue[data-status='Done'] .github-issue-icon::after {
   width: 52%;
   height: 30%;
   border: solid currentColor;
@@ -59,9 +87,29 @@
   border-radius: 0;
   transform: translateY(-1px) rotate(-45deg);
 }
-.github-issue:is([data-status="Duplicate"], [data-status="Not planned"]) .github-issue-icon::after {
+.github-issue:is([data-status='Duplicate'], [data-status='Not planned'])
+  .github-issue-icon::after {
+  width: 70%;
   height: 1.5px;
   border-radius: 0;
   background: currentColor;
   transform: rotate(-45deg);
+}
+@keyframes issue-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes issue-fill {
+  from {
+    stroke-dashoffset: 100;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
+  .github-issue[aria-busy='true'] .github-issue-icon {
+    animation: issue-spin 0.9s linear infinite;
+  }
+  .github-issue[aria-busy='false'] .github-issue-progress circle {
+    animation: issue-fill 0.52s ease-out;
+  }
 }
