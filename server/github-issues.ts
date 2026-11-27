@@ -52,7 +52,7 @@ const cache = (runtime.siteGithubIssues ??= new Map<string, CacheEntry>())
 async function requestIssue(
   repository: string,
   number: string,
-  token: string,
+  token?: string,
 ): Promise<IssueSnapshot | undefined> {
   try {
     const response = await fetch(
@@ -60,7 +60,7 @@ async function requestIssue(
       {
         headers: {
           Accept: 'application/vnd.github+json',
-          Authorization: `Bearer ${token}`,
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
         signal: AbortSignal.timeout(5000),
         redirect: 'error',
@@ -84,8 +84,9 @@ async function requestIssue(
 }
 
 export function fetchIssue(repository: string, number: string, token?: string) {
-  if (!token) return Promise.resolve(undefined)
-  const account = createHash('sha256').update(token).digest('hex')
+  const account = token
+    ? createHash('sha256').update(token).digest('hex')
+    : 'anonymous'
   const key = `${account}:${repository.toLowerCase()}#${number}`
   const cached = cache.get(key)
   if (cached && Date.now() < cached.expiresAt) return cached.request
@@ -106,11 +107,6 @@ const markdown = new MarkdownIt({ linkify: true })
 
 // Only the issue links published in the homepage can be read with the owner's credential.
 export async function homeIssueResponse(token?: string) {
-  if (!token)
-    return new Response(null, {
-      status: 503,
-      headers: { 'Cache-Control': 'no-store' },
-    })
   const source = await readFile('content/home.md', 'utf8')
   const issues = issueParagraphs(markdown.parse(source, {}))
   const result: Record<string, IssueDetails> = {}
