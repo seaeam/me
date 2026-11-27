@@ -1,4 +1,4 @@
-Hey！It's seam，重邮在读研三前端小研发，正在向全栈转型
+Hey！It's seam，重邮在读研三小前端，正在向全栈转型
 
 目前在 [![](/media/brands/converge.png) Converge.AI](https://convergeai.com/) 实习
 
@@ -7,10 +7,10 @@ Hey！It's seam，重邮在读研三前端小研发，正在向全栈转型
 - [![](/media/products/framia.png) Framia](https://convergeai.com/framia)
 - [![](/media/products/combos.png) Combos](https://convergeai.com/combos)
 
-近期项目　[![](/media/brands/gresume.svg) GResume](https://github.com/506-FETL/resume)  
+
 过往实习　[![](/media/brands/dongchedi.png) 懂车帝](https://www.dongchedi.com/) [![](/media/brands/bytedance.png) 字节跳动](https://www.bytedance.com/zh/) [![](/media/brands/mediastorm.svg) 影视飓风](https://www.ysjf.com/)
 
-工作之余  **focus** [![](/media/brands/gresume.svg) GResume](https://github.com/506-FETL/resume)
+最近在做 [![](/media/brands/gresume.svg) GResume](https://github.com/506-FETL/resume)
 
 [issue](https://github.com/506-FETL/resume/issues/64)
 

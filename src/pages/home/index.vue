@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import home from '@content/home.md'
+import { vLiveIssues } from '@/components/github-issue'
 import { vContentLinks } from '@/lib/content-links'
 import { site } from '@/lib/site'
 </script>
@@ -7,7 +8,7 @@ import { site } from '@/lib/site'
 <template>
   <article class="reading-column">
     <h1 class="slide-enter">{{ site.name }}</h1>
-    <div v-content-links class="prose home-copy" v-html="home.html" />
+    <div v-content-links v-live-issues class="prose home-copy" v-html="home.html" />
   </article>
 </template>
 

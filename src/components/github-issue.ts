@@ -1,43 +1,49 @@
-import { h } from 'vue'
+import { h, type ObjectDirective } from 'vue'
 import { linkAttributes } from '../lib/content-links'
+import { fetchIssue, parseIssueLink, type IssueDetails } from '../lib/github-issues'
 
-const slash = 'm5.7 10.3 4.6-4.6'
-const statusIcons = new Map<string, [tone: string, path: string]>([
-  ['Backlog', ['active', 'M8 8h.01']],
-  ['Todo', ['active', 'M8 4a4 4 0 0 1 4 4']],
-  ['In progress', ['active', 'M8 4a4 4 0 1 1 0 8']],
-  ['In review', ['active', 'M8 4a4 4 0 1 1-4 4']],
-  ['Done', ['done', 'm4.9 8.1 2.05 2.05 4.15-4.25']],
-  ['Not planned', ['muted', slash]],
-  ['Duplicate', ['muted', slash]],
-])
-
-interface IssueProps {
+interface IssueProps extends IssueDetails {
   href: string
-  title: string
-  reference: string
-  status: string
+  repository: string
+  number: string
 }
 
-export function GitHubIssue({ href, title, reference, status }: IssueProps) {
-  const [tone, path] = statusIcons.get(status) ?? ['muted', '']
-  const icon = h('svg', {
-    viewBox: '0 0 16 16', width: 15, height: 15, 'aria-hidden': 'true',
-    fill: 'none', stroke: 'currentColor', 'stroke-width': 1.5,
-    'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'data-tone': tone,
-  }, [
-    h('circle', { cx: 8, cy: 8, r: 6.6 }),
-    path && h('path', { d: path, 'stroke-width': status === 'Backlog' ? 2.8 : undefined }),
-  ])
+function issueLabel(repository: string, number: string, issue: IssueDetails) {
+  return `${issue.title} · ${repository}#${number} · ${issue.status}`
+}
 
+export function GitHubIssue(props: IssueProps) {
+  const { href, repository, number, title, status } = props
+  const label = issueLabel(repository, number, props)
   return h('a', {
     href, ...linkAttributes(href), class: 'github-issue',
-    'aria-label': `GitHub Issue · ${title} · ${reference} · ${status}`,
+    title: label, 'aria-label': label, 'data-status': status,
   }, [
-    h('span', { class: 'github-issue-subject' }, [
-      h('span', { class: 'github-issue-mark', 'aria-hidden': 'true' }), title,
-    ]),
-    h('span', { class: 'github-issue-ref mono' }, reference),
-    h('span', { class: 'github-issue-status' }, [icon, status]),
+    h('span', { class: 'github-issue-icon', 'aria-hidden': 'true' }),
+    h('span', { class: 'github-issue-subject' }, title),
+    h('span', { class: 'github-issue-ref mono' }, `#${number}`),
   ])
+}
+
+export const vLiveIssues: ObjectDirective<HTMLElement> = {
+  mounted(element) {
+    const requests = new Map<string, ReturnType<typeof fetchIssue>>()
+    for (const card of element.querySelectorAll<HTMLAnchorElement>('a.github-issue')) {
+      const issue = parseIssueLink(card.href)
+      const subject = card.querySelector('.github-issue-subject')
+      if (!issue || !subject) continue
+
+      const { repository, number } = issue
+      const key = `${repository}#${number}`.toLowerCase()
+      const request = requests.get(key) ?? fetchIssue(repository, number)
+      requests.set(key, request)
+      void request.then(details => {
+        if (!details || !card.isConnected) return
+        subject.textContent = details.title
+        card.dataset.status = details.status
+        card.title = issueLabel(repository, number, details)
+        card.setAttribute('aria-label', card.title)
+      })
+    }
+  },
 }
