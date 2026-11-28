@@ -71,6 +71,7 @@ onBeforeUnmount(() => controller.abort())
 <template>
   <div
     class="prose project-issues"
+    :aria-busy="loading"
     :aria-label="`${repository} 打开的 issue`"
     role="group">
     <ul v-if="issues.length" class="project-issue-list">
@@ -93,29 +94,23 @@ onBeforeUnmount(() => controller.abort())
         </button>
         <a v-content-links="issuesUrl" :href="issuesUrl">在 GitHub 查看</a>
       </template>
-      <span v-else-if="!issues.length && loading">正在加载 issue…</span>
-      <span v-else-if="!hasResult">尚未获取 issue 列表。</span>
-      <span v-else-if="!issues.length && !nextPage">暂无打开的 issue</span>
+      <span v-else-if="hasResult && !issues.length && !nextPage">
+        暂无打开的 issue
+      </span>
       <button
         v-else-if="nextPage"
         type="button"
         :disabled="loading"
         @click="load(nextPage)">
-        {{
-          loading
-            ? '正在加载…'
-            : issues.length
-              ? '显示更多 issue'
-              : '继续查找 issue'
-        }}
+        {{ issues.length ? '显示更多 issue' : '继续查找 issue' }}
       </button>
-      <span v-else-if="loading">正在更新 issue…</span>
     </div>
-    <noscript v-if="!hasResult || nextPage"
-      ><a v-content-links="issuesUrl" :href="issuesUrl"
+    <noscript v-if="!hasResult || nextPage">
+      <span v-if="!hasResult">尚未获取 issue 列表。</span>
+      <a v-content-links="issuesUrl" :href="issuesUrl"
         >在 GitHub 查看全部 issue</a
-      ></noscript
-    >
+      >
+    </noscript>
   </div>
 </template>
 

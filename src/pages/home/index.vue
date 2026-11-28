@@ -2,16 +2,21 @@
 import home from '@content/home.md?live-issues'
 import MarkdownBody from '@/components/markdown-body/index.vue'
 import { site } from '@/lib/site'
+import ProductConnections from './components/product-connections/index.vue'
 </script>
 
 <template>
   <article class="home-page reading-column">
     <h1 class="slide-enter">{{ site.name }}</h1>
     <MarkdownBody :content="home" live-issues />
+    <ProductConnections />
   </article>
 </template>
 
 <style>
+.home-page {
+  position: relative;
+}
 :where(.home-page) .markdown-section > :nth-child(1) {
   --stage: 1;
 }

@@ -18,7 +18,7 @@ it('没有构建快照时，静态页面说明尚未获取列表并提供仓库�
   expect(html).not.toContain('正在加载')
 })
 
-it('首次请求期间显示加载提示，只有收到末页的空列表后才显示空态', async () => {
+it('首次请求静默加载，只有收到末页的空列表后才显示空态', async () => {
   vi.stubGlobal(
     'fetch',
     vi.fn().mockResolvedValue(Response.json({ issues: [], nextPage: null })),
@@ -27,32 +27,39 @@ it('首次请求期间显示加载提示，只有收到末页的空列表后才�
   const wrapper = mount(GitHubProject, { props })
 
   await wrapper.vm.$nextTick()
-  expect(wrapper.text()).toContain('正在加载 issue')
+  expect(wrapper.text()).not.toContain('正在加载')
+  expect(wrapper.get('[role="group"]').attributes('aria-busy')).toBe('true')
   expect(wrapper.text()).not.toContain('暂无')
 
   await flushPromises()
   expect(wrapper.text()).toContain('暂无打开的 issue')
+  expect(wrapper.get('[role="group"]').attributes('aria-busy')).toBe('false')
 })
 
-it('有快照时立即显示原列表，并在刷新期间说明正在更新', async () => {
-  vi.stubGlobal(
-    'fetch',
-    vi
-      .fn()
-      .mockResolvedValue(Response.json({ issues: [issue], nextPage: null })),
-  )
+it.each([null, 2])(
+  '后台刷新时保留快照和翻页文案（下一页 %s）',
+  async (nextPage) => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValue(Response.json({ issues: [issue], nextPage: null })),
+    )
 
-  const wrapper = mount(GitHubProject, {
-    props: { ...props, snapshot: { issues: [issue], nextPage: null } },
-  })
+    const wrapper = mount(GitHubProject, {
+      props: { ...props, snapshot: { issues: [issue], nextPage } },
+    })
 
-  await wrapper.vm.$nextTick()
-  expect(wrapper.get('li').text()).toContain('修复分页')
-  expect(wrapper.text()).toContain('正在更新 issue')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.get('li').text()).toContain('修复分页')
+    expect(wrapper.get('.issue-controls').text()).toBe(
+      nextPage ? '显示更多 issue' : '',
+    )
 
-  await flushPromises()
-  expect(wrapper.text()).not.toContain('正在更新')
-})
+    await flushPromises()
+    expect(wrapper.text()).not.toContain('正在更新')
+  },
+)
 
 it('刷新失败保留快照，重试成功后用新列表替换快照', async () => {
   const request = vi

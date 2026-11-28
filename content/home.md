@@ -1,4 +1,4 @@
-Hey！It's seam，重邮在读研三小前端，正在向全栈转型
+Hey！It's seam，重邮在读研三小前端，正在转向全栈
 
 目前在 [![](/media/brands/converge.png) Converge.AI](https://convergeai.com/) 实习
 
