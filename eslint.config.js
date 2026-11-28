@@ -5,6 +5,8 @@ import vue from 'eslint-plugin-vue'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
+const testFilePattern = '*.{test,spec}.{ts,js,tsx,jsx,mts,cts,mjs,cjs}'
+
 export default defineConfig([
   globalIgnores(['dist/**', '.vite-ssg-temp/**', '.taste-skill/**']),
   js.configs.recommended,
@@ -28,12 +30,12 @@ export default defineConfig([
     languageOptions: { globals: globals.browser },
   },
   {
-    files: ['*.{js,ts}', 'api/**/*.ts', 'server/**/*.ts'],
+    files: ['*.{js,ts}', 'api/**/*.ts', 'build/**/*.ts', 'server/**/*.ts'],
     languageOptions: { globals: globals.node },
   },
   prettier,
   {
-    files: ['**/*.{test,spec}.{ts,js,tsx,jsx,mts,cts,mjs,cjs}'],
+    files: ['**/' + testFilePattern],
     ignores: ['**/__SPEC__/**'],
     rules: {
       'no-restricted-syntax': [
@@ -41,6 +43,23 @@ export default defineConfig([
         {
           selector: 'Program',
           message: '请将测试移到所属模块的 __SPEC__/ 目录。',
+        },
+      ],
+    },
+  },
+  {
+    files: ['**/components/**/' + testFilePattern],
+    ignores: [
+      '**/components/__SPEC__/**',
+      '!**/components/__SPEC__/components.{test,spec}.*',
+    ],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Program',
+          message:
+            '请将组件测试放在所属 components/__SPEC__/ 下，以组件名命名；需要拆分时，在同名子目录中按行为命名。',
         },
       ],
     },

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { vContentLinks } from '@/lib/content-links'
+import { vContentLinks } from '@/directives/content-links'
 import { site } from '@/lib/site'
 import { sections } from '@/router/sections'
 import SiteSignature from './signature.vue'

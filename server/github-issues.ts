@@ -1,104 +1,25 @@
-import { readFile } from 'node:fs/promises'
-import frontMatter from 'front-matter'
-import MarkdownIt from 'markdown-it'
-import type Token from 'markdown-it/lib/token.mjs'
 import {
-  githubRequest,
-  parseGitHubIssueDetails,
-  parseIssueLink,
+  normalizeRepository,
   type IssueDetails,
 } from '../src/lib/github-issues.js'
-import { cachedSnapshot, type SnapshotCache } from './github-cache.js'
+import {
+  fetchIssue,
+  issueTtlSeconds,
+  projectPageSnapshot,
+} from './github-snapshots.js'
+import { hasPublishedIssues, homeIssueLinks } from './published-issues.js'
 
-export function issueParagraphs(tokens: Token[]) {
-  return tokens.flatMap((token, index) => {
-    const paragraph = tokens[index - 1]
-
-    if (
-      paragraph?.type !== 'paragraph_open' ||
-      token.type !== 'inline' ||
-      token.children?.length !== 3
-    )
-      return []
-
-    const [link, label, close] = token.children
-
-    if (
-      link.type !== 'link_open' ||
-      label.type !== 'text' ||
-      close.type !== 'link_close'
-    )
-      return []
-
-    const href = link.attrGet('href') ?? ''
-    const issue = parseIssueLink(href)
-
-    if (!issue) return []
-
-    return [
-      {
-        ...issue,
-        href,
-        title: label.content,
-        fallbackStatus: link.attrGet('title'),
-        token,
-        paragraph,
-      },
-    ]
-  })
+function cacheHeader(maxAge: number) {
+  return `public, max-age=${maxAge}, s-maxage=${maxAge}`
 }
 
-const ttlSeconds = 60 * 60
-
-// ViteSSG 会加载两次配置，两次渲染需要使用同一份快照。
-const runtime = globalThis as typeof globalThis & {
-  siteGithubIssues?: SnapshotCache<IssueDetails>
-}
-
-const issueSnapshots = (runtime.siteGithubIssues ??= new Map())
-
-export async function fetchIssue(
-  repository: string,
-  number: string,
-  token?: string,
-) {
-  const path = `${repository}/issues/${number}`
-
-  try {
-    const snapshot = await cachedSnapshot(
-      issueSnapshots,
-      path.toLowerCase(),
-      token,
-      ttlSeconds,
-      async () => {
-        const response = await githubRequest(path, token)
-
-        return parseGitHubIssueDetails(await response.json(), 'No status')
-      },
-    )
-
-    return { ...snapshot.value, expiresAt: snapshot.expiresAt }
-  } catch (error) {
-    console.warn(
-      `[github-issue] ${path}:`,
-      error instanceof Error ? error.message : error,
-    )
-  }
-}
-
-const markdown = new MarkdownIt({ html: true, linkify: true })
-
-// 站点凭据只用于首页正文中公开展示的 issue。
-export async function homeIssueResponse(token?: string) {
-  const source = await readFile('content/home.md', 'utf8')
-  const { body } = frontMatter(source)
-  const issues = issueParagraphs(markdown.parse(body, {}))
-  const links = new Map(issues.map((issue) => [issue.href, issue]))
+async function homeIssueResponse(token?: string) {
+  const links = await homeIssueLinks()
   const result: Record<string, IssueDetails> = {}
   let expiresAt = Infinity
 
   await Promise.all(
-    Array.from(links.values(), async ({ href, repository, number }) => {
+    Array.from(links, async ([href, { repository, number }]) => {
       const details = await fetchIssue(repository, number, token)
 
       if (!details) return
@@ -112,16 +33,60 @@ export async function homeIssueResponse(token?: string) {
   const complete = found === links.size
 
   const maxAge = Math.min(
-    ttlSeconds,
+    issueTtlSeconds,
     Math.max(0, Math.floor((expiresAt - Date.now()) / 1000)),
   )
 
   return Response.json(result, {
     status: found > 0 || complete ? 200 : 503,
     headers: {
-      'Cache-Control': complete
-        ? `public, max-age=${maxAge}, s-maxage=${maxAge}`
-        : 'no-store',
+      'Cache-Control': complete ? cacheHeader(maxAge) : 'no-store',
     },
   })
+}
+
+export async function githubIssuesResponse(
+  params: URLSearchParams,
+  token?: string,
+) {
+  const repositoryParam = params.get('repository')
+  const pageParam = params.get('page') ?? '1'
+  const page = Number(pageParam)
+
+  try {
+    if (repositoryParam === null) return await homeIssueResponse(token)
+
+    const repository = normalizeRepository(repositoryParam)
+
+    if (!repository) return Response.json(null, { status: 404 })
+    if (!/^[1-9]\d*$/.test(pageParam) || !Number.isSafeInteger(page))
+      return new Response(null, { status: 400 })
+
+    const source = params.get('source') ?? 'home.md'
+
+    if (!(await hasPublishedIssues(source, repository)))
+      return Response.json(null, { status: 404 })
+
+    const { value, expiresAt } = await projectPageSnapshot(
+      repository,
+      page,
+      token,
+    )
+
+    const maxAge = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000))
+
+    return Response.json(value, {
+      headers: { 'Cache-Control': cacheHeader(maxAge) },
+    })
+  } catch (error) {
+    console.warn(
+      `[github-issues] ${repositoryParam ?? 'home.md'} page ${page}:`,
+      error instanceof Error ? error.message : error,
+    )
+
+    return new Response(null, {
+      status: 503,
+      headers: { 'Cache-Control': 'no-store' },
+    })
+  }
 }

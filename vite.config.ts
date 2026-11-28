@@ -1,42 +1,11 @@
 import { execFileSync } from 'node:child_process'
-import { relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { defineConfig, loadEnv, type Plugin, type ViteDevServer } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import UnoCSS from 'unocss/vite'
-import MarkdownIt from 'markdown-it'
-import frontMatter from 'front-matter'
-import { postHtmlFileName } from './src/router/post-html-file-name'
-import { linkAttributes } from './src/lib/content-links'
-import { renderMarkdown } from './src/lib/markdown-issues'
-import { githubIssuesResponse } from './server/project-issues'
-import { markdownProjects } from './server/markdown-projects'
-
-const markdown = new MarkdownIt({
-  html: true,
-  linkify: true,
-  typographer: true,
-}).use(markdownProjects)
-
-markdown.renderer.rules.table_open = () => '<div class="table-scroll"><table>\n'
-markdown.renderer.rules.table_close = () => '</table></div>\n'
-markdown.renderer.rules.link_open = (
-  tokens,
-  index,
-  options,
-  _env,
-  renderer,
-) => {
-  const link = tokens[index]
-  const { target, rel } = linkAttributes(link.attrGet('href') || '')
-
-  if (target && rel) {
-    link.attrSet('target', target)
-    link.attrSet('rel', rel)
-  }
-
-  return renderer.renderToken(tokens, index, options)
-}
+import { githubIssuesApi } from './build/github-issues-api'
+import { postHtmlFileName } from './build/post-html-file-name'
+import { markdownContentPlugin } from './build/render-markdown'
 
 function githubCredential(mode: string) {
   const token = loadEnv(mode, process.cwd(), 'GITHUB_TOKEN').GITHUB_TOKEN
@@ -62,66 +31,22 @@ function githubCredential(mode: string) {
   }
 }
 
-function siteContent(mode: string): Plugin {
+export default defineConfig(({ mode }) => {
   const githubToken = githubCredential(mode)
 
-  function serveIssues({ middlewares }: Pick<ViteDevServer, 'middlewares'>) {
-    middlewares.use('/api/github-issues', async (req, res, next) => {
-      try {
-        if (req.method !== 'GET') {
-          res.writeHead(405, { Allow: 'GET' }).end()
-
-          return
-        }
-
-        const { searchParams } = new URL(req.url ?? '/', 'http://localhost')
-        const response = await githubIssuesResponse(searchParams, githubToken)
-
-        res.writeHead(response.status, Object.fromEntries(response.headers))
-        res.end(await response.text())
-      } catch (error) {
-        next(error)
-      }
-    })
-  }
-
   return {
-    name: 'site-content',
-    configureServer: serveIssues,
-    configurePreviewServer: serveIssues,
-    async transform(source, id) {
-      const liveIssues = id.endsWith('.md?live-issues')
-
-      if (!liveIssues && !id.endsWith('.md')) return
-
-      const { attributes, body } = frontMatter<Record<string, unknown>>(source)
-
-      const content = await renderMarkdown(markdown, body, {
-        liveIssues,
-        githubToken,
-      })
-
-      return {
-        code:
-          'export default ' +
-          JSON.stringify({
-            ...attributes,
-            ...content,
-            source: relative(resolve('content'), id.split('?')[0]),
-          }),
-        map: null,
-      }
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+        '@content': fileURLToPath(new URL('./content', import.meta.url)),
+      },
     },
+    ssgOptions: { dirStyle: 'nested', htmlFileName: postHtmlFileName },
+    plugins: [
+      markdownContentPlugin(githubToken),
+      githubIssuesApi(githubToken),
+      vue(),
+      UnoCSS(),
+    ],
   }
-}
-
-export default defineConfig(({ mode }) => ({
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '@content': fileURLToPath(new URL('./content', import.meta.url)),
-    },
-  },
-  ssgOptions: { dirStyle: 'nested', htmlFileName: postHtmlFileName },
-  plugins: [siteContent(mode), vue(), UnoCSS()],
-}))
+})

@@ -66,6 +66,11 @@ function dismiss() {
 .project-toc {
   display: none;
 }
+@media (prefers-reduced-motion: no-preference) {
+  :global(html:has(.project-toc)) {
+    scroll-behavior: smooth;
+  }
+}
 @media screen and (min-width: 1024px) {
   .project-toc {
     position: fixed;

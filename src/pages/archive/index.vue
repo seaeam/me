@@ -35,7 +35,7 @@ const dateFormat = new Intl.DateTimeFormat('zh-CN', {
   </section>
 </template>
 
-<style>
+<style scoped>
 .year-label {
   position: relative;
   height: 5rem;

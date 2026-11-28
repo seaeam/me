@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useHead } from '@unhead/vue'
 import SiteHeader from '@/components/site-header/index.vue'
-import ScrollToTop from '@/components/scroll-to-top.vue'
+import ScrollToTop from '@/components/scroll-to-top/index.vue'
 import SiteBackground from '@/components/background/index.vue'
 import { site } from '@/lib/site'
 
@@ -38,6 +38,27 @@ useHead({
 </template>
 
 <style scoped>
+.skip-link {
+  position: fixed;
+  z-index: 99;
+  top: 0;
+  left: 50%;
+  padding: 0.65rem 1rem;
+  transform: translate(-50%, -150%);
+  background: var(--paper);
+}
+.skip-link:focus {
+  transform: translate(-50%, 0.35rem);
+}
+#main {
+  position: relative;
+  z-index: 1;
+  padding: 2.5rem 1.75rem;
+  overflow-x: hidden;
+}
+#main:focus {
+  outline: none;
+}
 .site-footer {
   position: relative;
   margin-top: auto;
@@ -54,5 +75,10 @@ useHead({
 .site-footer a:is(:hover, :focus-visible) {
   color: var(--prose);
   text-decoration-color: currentColor;
+}
+@media print {
+  .skip-link {
+    display: none;
+  }
 }
 </style>

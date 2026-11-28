@@ -1,9 +1,5 @@
-import MarkdownIt from 'markdown-it'
 import { expect, it, vi } from 'vitest'
-import { markdownProjects } from '../../../server/markdown-projects'
-import { renderMarkdown } from '../markdown-issues'
-
-const markdown = new MarkdownIt({ html: true }).use(markdownProjects)
+import { renderMarkdown } from '../render-markdown'
 
 it('按原文顺序输出正文与项目，只为启用 issue 的项目附加快照', async () => {
   const fetchPage = vi
@@ -20,7 +16,7 @@ it('按原文顺序输出正文与项目，只为启用 issue 的项目附加快
     '结尾',
   ].join('\n\n')
 
-  const content = await renderMarkdown(markdown, source, { liveIssues: false })
+  const content = await renderMarkdown(source, { liveIssues: false })
 
   expect(content.sections).toEqual([
     { html: '<h1>开头</h1>\n' },
@@ -49,7 +45,6 @@ it('静态 issue 卡片显示上游标题和状态，并转义标题中的 HTML'
   )
 
   const { sections } = await renderMarkdown(
-    markdown,
     '[旧标题](https://github.com/example/render/issues/34)',
     { liveIssues: false },
   )
@@ -70,7 +65,6 @@ it('实时卡片在断网时保留作者提供的标题和状态，供客户端�
   vi.spyOn(console, 'warn').mockImplementation(() => {})
 
   const { sections } = await renderMarkdown(
-    markdown,
     '[作者记录](https://github.com/example/render/issues/35 "Todo")',
     { liveIssues: true },
   )
@@ -91,7 +85,6 @@ it('静态页面未能取得状态时向读者说明', async () => {
   vi.spyOn(console, 'warn').mockImplementation(() => {})
 
   const { sections } = await renderMarkdown(
-    markdown,
     '[作者记录](https://github.com/example/render/issues/36)',
     { liveIssues: false },
   )

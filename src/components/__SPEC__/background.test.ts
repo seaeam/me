@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest'
-import { startPlum } from '../plum'
+import { startPlum } from '../background/plum'
 
 it.each([360, 800])(
   '按 %i 像素画布宽度选择生长边缘，并在最后一帧停止',

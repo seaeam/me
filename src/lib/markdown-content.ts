@@ -1,4 +1,12 @@
-import type { GitHubProjectProps, IssuePage } from './github-issues'
+import type { IssuePage } from './github-issues'
+
+export interface GitHubProjectProps {
+  repo: string
+  name?: string
+  icon?: string
+  prefix?: string
+  showIssues?: boolean
+}
 
 export type MarkdownSection =
   { html: string } | { project: GitHubProjectProps; snapshot?: IssuePage }

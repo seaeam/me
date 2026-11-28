@@ -1,6 +1,6 @@
 import MarkdownIt from 'markdown-it'
 import { expect, it } from 'vitest'
-import { markdownProjects } from '../markdown-projects'
+import { issueParagraphs, markdownProjects } from '../markdown-github'
 
 const markdown = new MarkdownIt({ html: true }).use(markdownProjects)
 
@@ -59,4 +59,26 @@ it.each([
   ],
 ])('报告非法项目属性所在行', (tag, error) => {
   expect(() => markdown.parse(`正文\n\n${tag}`, {})).toThrow(error)
+})
+
+it('从独占段落的链接提取编号、标题和备用状态', () => {
+  const href = 'https://github.com/example/site/issues/42'
+
+  const source = [
+    `[修正排版](${href} "In review")`,
+    `见 [讨论](${href})`,
+    '[仓库](https://github.com/example/site)',
+    `~~~md\n[示例](${href})\n~~~`,
+  ].join('\n\n')
+
+  const issues = issueParagraphs(markdown.parse(source, {}))
+
+  expect(issues).toHaveLength(1)
+  expect(issues[0]).toMatchObject({
+    href,
+    title: '修正排版',
+    fallbackStatus: 'In review',
+    repository: 'example/site',
+    number: '42',
+  })
 })

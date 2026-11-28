@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import GitHubProject from './github-project.vue'
-import { vLiveIssues } from './github-issue'
-import { vContentLinks } from '@/lib/content-links'
+import GitHubProject from '../github-project/index.vue'
+import { vLiveIssues } from '@/directives/live-issues'
+import { vContentLinks } from '@/directives/content-links'
 import type { MarkdownContent } from '@/lib/markdown-content'
 
-defineProps<{ content: MarkdownContent; home?: boolean }>()
+defineProps<{ content: MarkdownContent; liveIssues?: boolean }>()
 </script>
 
 <template>
@@ -12,9 +12,8 @@ defineProps<{ content: MarkdownContent; home?: boolean }>()
     <div
       v-if="'html' in section"
       v-content-links
-      v-live-issues="!!home"
-      class="prose"
-      :class="{ 'home-copy': home }"
+      v-live-issues="liveIssues"
+      class="prose markdown-section"
       v-html="section.html" />
     <GitHubProject
       v-else

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { mount } from '@vue/test-utils'
 import { expect, it } from 'vitest'
-import GitHubProject from '../github-project.vue'
+import GitHubProject from '../../github-project/index.vue'
 
 it('仓库入口使用项目名和规范化地址，未开启 issue 列表时只渲染仓库信息', () => {
   const wrapper = mount(GitHubProject, {

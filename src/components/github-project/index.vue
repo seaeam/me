@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { vContentLinks } from '@/lib/content-links'
-import {
-  normalizeRepository,
-  type GitHubProjectProps,
-  type IssuePage,
-} from '@/lib/github-issues'
+import { vContentLinks } from '@/directives/content-links'
+import { normalizeRepository, type IssuePage } from '@/lib/github-issues'
+import type { GitHubProjectProps } from '@/lib/markdown-content'
 import ProjectIssues from './project-issues.vue'
 
 const props = defineProps<

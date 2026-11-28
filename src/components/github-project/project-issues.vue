@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { GitHubIssue } from './github-issue'
-import { vContentLinks } from '../lib/content-links'
-import { fetchProjectIssuePage, type IssuePage } from '../lib/github-issues'
+import { GitHubIssue } from '../github-issue/index'
+import { vContentLinks } from '@/directives/content-links'
+import type { IssuePage } from '@/lib/github-issues'
+import { fetchProjectIssuePage } from '@/services/project-issues'
 
 const props = defineProps<{
   repository: string

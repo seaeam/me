@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { afterEach, expect, it, vi } from 'vitest'
-import ThemeToggle from '../theme-toggle.vue'
+import ThemeToggle from '../site-header/theme-toggle.vue'
 
 enableAutoUnmount(afterEach)
 

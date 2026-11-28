@@ -3,8 +3,9 @@ import type Token from 'markdown-it/lib/token.mjs'
 import { parse } from 'vue/compiler-sfc'
 import {
   normalizeRepository,
-  type GitHubProjectProps,
+  parseIssueLink,
 } from '../src/lib/github-issues.js'
+import type { GitHubProjectProps } from '../src/lib/markdown-content.js'
 
 function parseProjectProps(
   markup: string,
@@ -111,4 +112,42 @@ export function markdownProjects(markdown: MarkdownIt) {
     },
     { alt: ['paragraph'] },
   )
+}
+
+export function issueParagraphs(tokens: Token[]) {
+  return tokens.flatMap((token, index) => {
+    const paragraph = tokens[index - 1]
+
+    if (
+      paragraph?.type !== 'paragraph_open' ||
+      token.type !== 'inline' ||
+      token.children?.length !== 3
+    )
+      return []
+
+    const [link, label, close] = token.children
+
+    if (
+      link.type !== 'link_open' ||
+      label.type !== 'text' ||
+      close.type !== 'link_close'
+    )
+      return []
+
+    const href = link.attrGet('href') ?? ''
+    const issue = parseIssueLink(href)
+
+    if (!issue) return []
+
+    return [
+      {
+        ...issue,
+        href,
+        title: label.content,
+        fallbackStatus: link.attrGet('title'),
+        token,
+        paragraph,
+      },
+    ]
+  })
 }

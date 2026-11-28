@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { vContentLinks } from '@/lib/content-links'
+import { vContentLinks } from '@/directives/content-links'
 import { site } from '@/lib/site'
 import ProjectContents from './components/project-contents/index.vue'
-import { projectGroups } from './const'
+import ProjectEntry from './components/project-entry/index.vue'
+import { projectGroups } from './project-groups'
 </script>
 
 <template>
@@ -32,33 +33,10 @@ import { projectGroups } from './const'
       :aria-labelledby="group.id">
       <h2 :id="group.id">{{ group.name.replace(/\s+/g, '\n') }}</h2>
       <div class="project-grid">
-        <component
-          :is="project.url ? 'a' : 'article'"
+        <ProjectEntry
           v-for="project in group.projects"
           :key="project.name"
-          v-content-links="project.url"
-          :href="project.url || undefined"
-          class="project-entry">
-          <span v-if="project.icon" class="project-icon" aria-hidden="true">
-            <img
-              :src="project.icon"
-              :class="{ 'icon-light': project.iconDark }"
-              alt=""
-              width="36"
-              height="36" />
-            <img
-              v-if="project.iconDark"
-              :src="project.iconDark"
-              class="icon-dark"
-              alt=""
-              width="36"
-              height="36" />
-          </span>
-          <div>
-            <h3>{{ project.name }}</h3>
-            <p v-if="project.description">{{ project.description }}</p>
-          </div>
-        </component>
+          :project="project" />
       </div>
     </section>
 
@@ -198,53 +176,6 @@ import { projectGroups } from './const'
     grid-template-columns: repeat(3, minmax(0, 350px));
   }
 }
-.project-entry {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  min-width: 0;
-  padding: 0.5rem 0.875rem 0.875rem;
-  border-radius: 6px;
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.6;
-  transition:
-    opacity 0.2s ease-out,
-    background-color 0.2s ease-out;
-}
-a.project-entry:is(:hover, :focus-visible) {
-  background: #8881;
-  opacity: 1;
-}
-.project-icon {
-  display: grid;
-  flex: 0 0 36px;
-  width: 36px;
-  height: 36px;
-}
-.project-icon img {
-  grid-area: 1 / 1;
-  display: block;
-  object-fit: contain;
-}
-.project-icon .icon-light {
-  display: var(--light-only);
-}
-.project-icon .icon-dark {
-  display: var(--dark-only);
-}
-.project-entry h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 400;
-  line-height: 1.5;
-}
-.project-entry p {
-  margin: 0;
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  opacity: 0.5;
-}
 .project-sponsor {
   margin-top: 2.5rem;
   padding-bottom: 1.25rem;
@@ -292,10 +223,5 @@ a.project-entry:is(:hover, :focus-visible) {
 }
 .parent-link:is(:hover, :focus-visible) span:last-child {
   border-color: currentColor;
-}
-@media (prefers-reduced-motion: reduce) {
-  .project-entry {
-    transition: none;
-  }
 }
 </style>

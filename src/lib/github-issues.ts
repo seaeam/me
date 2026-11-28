@@ -16,14 +16,6 @@ export interface IssueDetails {
   status: string
 }
 
-export interface GitHubProjectProps {
-  repo: string
-  name?: string
-  icon?: string
-  prefix?: string
-  showIssues?: boolean
-}
-
 export function normalizeRepository(repo: string) {
   const name = repo.trim()
 
@@ -40,7 +32,7 @@ export interface IssuePage {
   nextPage: number | null
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
+export function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
@@ -52,7 +44,7 @@ function isPositiveInteger(value: unknown): value is number {
   return typeof value === 'number' && Number.isSafeInteger(value) && value > 0
 }
 
-function isIssueDetails(value: unknown): value is IssueDetails {
+export function isIssueDetails(value: unknown): value is IssueDetails {
   return isRecord(value) && hasText(value.title) && hasText(value.status)
 }
 
@@ -62,6 +54,19 @@ function isOpenIssue(value: unknown): value is OpenIssue {
     'number' in value &&
     isPositiveInteger(value.number)
   )
+}
+
+export function parseIssuePage(batch: unknown, page: number): IssuePage {
+  if (
+    !isRecord(batch) ||
+    !Array.isArray(batch.issues) ||
+    !batch.issues.every(isOpenIssue) ||
+    (batch.nextPage !== null &&
+      !(isPositiveInteger(batch.nextPage) && batch.nextPage > page))
+  )
+    throw new Error('Invalid project issue page')
+
+  return { issues: batch.issues, nextPage: batch.nextPage }
 }
 
 export function parseGitHubIssueDetails(
@@ -148,74 +153,5 @@ export async function fetchGitHubIssuePage(
     nextPage: /rel="next"/.test(response.headers.get('link') ?? '')
       ? page + 1
       : null,
-  }
-}
-
-export async function fetchProjectIssuePage(
-  repository: string,
-  page: number,
-  signal: AbortSignal,
-  source?: string,
-): Promise<IssuePage> {
-  if (!source) return fetchGitHubIssuePage(repository, page, undefined, signal)
-
-  const params = new URLSearchParams({ repository, page: String(page), source })
-
-  const response = await fetch(`/api/github-issues?${params}`, {
-    headers: { Accept: 'application/json' },
-    signal,
-  })
-
-  const isJson = response.headers
-    .get('content-type')
-    ?.includes('application/json')
-
-  // 静态托管可能向 API 请求返回站点 HTML 或 404 页面。
-  if (!isJson && (response.ok || response.status === 404))
-    return fetchGitHubIssuePage(repository, page, undefined, signal)
-  if (!response.ok) throw new Error(`HTTP ${response.status}`)
-
-  const batch: unknown = await response.json()
-
-  if (
-    !isRecord(batch) ||
-    !Array.isArray(batch.issues) ||
-    !batch.issues.every(isOpenIssue) ||
-    (batch.nextPage !== null &&
-      !(isPositiveInteger(batch.nextPage) && batch.nextPage > page))
-  )
-    throw new Error('Invalid project issue page')
-
-  return { issues: batch.issues, nextPage: batch.nextPage }
-}
-
-export async function fetchHomeIssues(): Promise<Record<string, IssueDetails>> {
-  try {
-    const response = await fetch('/api/github-issues', {
-      headers: { Accept: 'application/json' },
-      signal: AbortSignal.timeout(6500),
-    })
-
-    if (
-      !response.ok ||
-      !response.headers.get('content-type')?.includes('application/json')
-    )
-      return {}
-
-    const records: unknown = await response.json()
-
-    if (!isRecord(records)) return {}
-
-    const issues: Record<string, IssueDetails> = {}
-
-    for (const [href, details] of Object.entries(records)) {
-      if (parseIssueLink(href) && isIssueDetails(details))
-        issues[href] = details
-    }
-
-    return issues
-  } catch {
-    // 静态站和离线访问沿用构建时的快照。
-    return {}
   }
 }

@@ -1,7 +1,7 @@
 import 'virtual:uno.css'
 import './styles/base.css'
 import './styles/prose.css'
-import './styles/github-issue.css'
+import './components/github-issue/style.css'
 import NProgress from 'nprogress'
 import { ViteSSG } from 'vite-ssg'
 import App from './App.vue'

@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest'
 import { postHtmlFileName } from '../post-html-file-name'
-import { postPath } from '../sections'
+import { postPath } from '../../src/router/sections'
 
 it.each(['一 篇', '进度100%', '保留%20字面值', '100%25'])(
   '将文章 %s 的公开路径还原为静态目录名',

@@ -2,7 +2,7 @@
 import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { afterEach, expect, it, vi } from 'vitest'
-import ScrollToTop from '../scroll-to-top.vue'
+import ScrollToTop from '../scroll-to-top/index.vue'
 
 enableAutoUnmount(afterEach)
 

@@ -2,6 +2,8 @@ import projectData from '@content/projects.json'
 import { contentRecord, optionalText, requiredText } from '@/lib/content-fields'
 import type { ProjectGroup } from './types'
 
+const defaultGroupName = 'Current Focus'
+
 function groupAnchor(name: string, usedIds: Set<string>) {
   const slug =
     name
@@ -9,7 +11,7 @@ function groupAnchor(name: string, usedIds: Set<string>) {
       .match(/[\p{L}\p{N}]+/gu)
       ?.join('-') || 'group'
 
-  const base = name === 'Current Focus' ? 'current-focus' : 'projects-' + slug
+  const base = name === defaultGroupName ? 'current-focus' : 'projects-' + slug
   let id = base
 
   for (let suffix = 2; usedIds.has(id); suffix++) {
@@ -32,7 +34,7 @@ function readProjectGroups(content: unknown) {
     const fields = contentRecord(entry, path)
 
     const groupName =
-      optionalText(fields.group, path + '.group') || 'Current Focus'
+      optionalText(fields.group, path + '.group') || defaultGroupName
 
     let group = groups.get(groupName)
 

@@ -1,4 +1,4 @@
-import { githubIssuesResponse } from '../server/project-issues.js'
+import { githubIssuesResponse } from '../server/github-issues.js'
 
 export function GET(request: Request) {
   return githubIssuesResponse(

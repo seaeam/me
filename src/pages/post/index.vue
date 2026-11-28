@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Article } from '@/features/posts'
-import MarkdownBody from '@/components/markdown-body.vue'
+import MarkdownBody from '@/components/markdown-body/index.vue'
 
 defineProps<{ post: Article }>()
 </script>
