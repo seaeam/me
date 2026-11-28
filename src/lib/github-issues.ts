@@ -3,8 +3,11 @@ const issueLink =
 
 export function parseIssueLink(href: string) {
   const match = issueLink.exec(href)
+
   if (!match) return
+
   const [, owner, repo, number] = match
+
   return { repository: `${owner}/${repo}`, number }
 }
 
@@ -23,6 +26,7 @@ export interface GitHubProjectProps {
 
 export function normalizeRepository(repo: string) {
   const name = repo.trim()
+
   if (/^[\w-]+\/[\w.-]+$/.test(name) && !/\/\.{1,2}$/.test(name))
     return name.toLowerCase()
 }
@@ -34,6 +38,46 @@ export interface OpenIssue extends IssueDetails {
 export interface IssuePage {
   issues: OpenIssue[]
   nextPage: number | null
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function hasText(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0
+}
+
+function isPositiveInteger(value: unknown): value is number {
+  return typeof value === 'number' && Number.isSafeInteger(value) && value > 0
+}
+
+function isIssueDetails(value: unknown): value is IssueDetails {
+  return isRecord(value) && hasText(value.title) && hasText(value.status)
+}
+
+function isOpenIssue(value: unknown): value is OpenIssue {
+  return (
+    isIssueDetails(value) &&
+    'number' in value &&
+    isPositiveInteger(value.number)
+  )
+}
+
+export function parseGitHubIssueDetails(
+  value: unknown,
+  fallbackStatus: string,
+): IssueDetails {
+  if (!isRecord(value) || !hasText(value.title))
+    throw new Error('Invalid GitHub issue title')
+
+  const { title, status } = value
+
+  if (status == null) return { title, status: fallbackStatus }
+  if (!isRecord(status) || !hasText(status.name))
+    throw new Error('Invalid GitHub issue status')
+
+  return { title, status: status.name }
 }
 
 export async function githubRequest(
@@ -49,7 +93,9 @@ export async function githubRequest(
     signal,
     redirect: 'error',
   })
+
   if (!response.ok) throw new Error(`GitHub HTTP ${response.status}`)
+
   return response
 }
 
@@ -66,24 +112,37 @@ export async function fetchGitHubIssuePage(
     per_page: '10',
     page: String(page),
   })
+
   const response = await githubRequest(
     `${repository}/issues?${params}`,
     token,
     signal,
   )
-  const rows = await response.json()
+
+  const rows: unknown = await response.json()
+
   if (!Array.isArray(rows)) throw new Error('Invalid GitHub issue list')
+
   const issues: OpenIssue[] = []
+
   for (const row of rows) {
-    if (row.pull_request || row.state !== 'open') continue
-    if (!Number.isSafeInteger(row.number) || typeof row.title !== 'string')
+    if (
+      !isRecord(row) ||
+      (row.state !== 'open' && row.state !== 'closed') ||
+      (row.pull_request != null && !isRecord(row.pull_request))
+    )
       throw new Error('Invalid GitHub issue')
+
+    if (row.pull_request || row.state === 'closed') continue
+    if (!isPositiveInteger(row.number))
+      throw new Error('Invalid GitHub issue number')
+
     issues.push({
       number: row.number,
-      title: row.title,
-      status: typeof row.status?.name === 'string' ? row.status.name : 'Open',
+      ...parseGitHubIssueDetails(row, 'Open'),
     })
   }
+
   return {
     issues,
     nextPage: /rel="next"/.test(response.headers.get('link') ?? '')
@@ -99,19 +158,35 @@ export async function fetchProjectIssuePage(
   source?: string,
 ): Promise<IssuePage> {
   if (!source) return fetchGitHubIssuePage(repository, page, undefined, signal)
+
   const params = new URLSearchParams({ repository, page: String(page), source })
+
   const response = await fetch(`/api/github-issues?${params}`, {
     headers: { Accept: 'application/json' },
     signal,
   })
+
   const isJson = response.headers
     .get('content-type')
     ?.includes('application/json')
-  // Static hosts can serve a 404 or the site's HTML for an unknown API route.
+
+  // 静态托管可能向 API 请求返回站点 HTML 或 404 页面。
   if (!isJson && (response.ok || response.status === 404))
     return fetchGitHubIssuePage(repository, page, undefined, signal)
   if (!response.ok) throw new Error(`HTTP ${response.status}`)
-  return response.json()
+
+  const batch: unknown = await response.json()
+
+  if (
+    !isRecord(batch) ||
+    !Array.isArray(batch.issues) ||
+    !batch.issues.every(isOpenIssue) ||
+    (batch.nextPage !== null &&
+      !(isPositiveInteger(batch.nextPage) && batch.nextPage > page))
+  )
+    throw new Error('Invalid project issue page')
+
+  return { issues: batch.issues, nextPage: batch.nextPage }
 }
 
 export async function fetchHomeIssues(): Promise<Record<string, IssueDetails>> {
@@ -120,13 +195,27 @@ export async function fetchHomeIssues(): Promise<Record<string, IssueDetails>> {
       headers: { Accept: 'application/json' },
       signal: AbortSignal.timeout(6500),
     })
+
     if (
-      response.ok &&
-      response.headers.get('content-type')?.includes('application/json')
+      !response.ok ||
+      !response.headers.get('content-type')?.includes('application/json')
     )
-      return await response.json()
+      return {}
+
+    const records: unknown = await response.json()
+
+    if (!isRecord(records)) return {}
+
+    const issues: Record<string, IssueDetails> = {}
+
+    for (const [href, details] of Object.entries(records)) {
+      if (parseIssueLink(href) && isIssueDetails(details))
+        issues[href] = details
+    }
+
+    return issues
   } catch {
-    /* Static hosts and offline visits use the build snapshot. */
+    // 静态站和离线访问沿用构建时的快照。
+    return {}
   }
-  return {}
 }

@@ -1,28 +1,38 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import type { ProjectGroup } from '../../types'
 
-defineProps<{ groups: { id: string; name: string }[] }>()
-const open = ref(false)
+defineProps<{ groups: Pick<ProjectGroup, 'name' | 'id'>[] }>()
+
+const state = ref<'closed' | 'preview' | 'expanded'>('closed')
+const open = computed(() => state.value !== 'closed')
 const toggle = ref<HTMLButtonElement>()
+
+function preview(event: PointerEvent) {
+  if (event.pointerType === 'mouse' && !open.value) state.value = 'preview'
+}
 
 function leavePointer(event: PointerEvent) {
   if (
+    state.value === 'preview' &&
     event.pointerType === 'mouse' &&
     !(event.currentTarget as HTMLElement).contains(document.activeElement)
   )
-    open.value = false
+    state.value = 'closed'
 }
+
 function leaveFocus(event: FocusEvent) {
   if (
     !(event.currentTarget as HTMLElement).contains(
       event.relatedTarget as Node | null,
     )
   )
-    open.value = false
+    state.value = 'closed'
 }
+
 function dismiss() {
   toggle.value?.focus()
-  open.value = false
+  state.value = 'closed'
 }
 </script>
 
@@ -31,7 +41,7 @@ function dismiss() {
     class="project-toc"
     :class="{ open }"
     aria-label="项目目录"
-    @pointerenter="$event.pointerType === 'mouse' && (open = true)"
+    @pointerenter="preview"
     @pointerleave="leavePointer"
     @focusout="leaveFocus"
     @keydown.esc.prevent="dismiss">
@@ -41,12 +51,12 @@ function dismiss() {
       aria-label="项目目录"
       aria-controls="project-contents"
       :aria-expanded="open"
-      @click="open = !open">
+      @click="state = state === 'expanded' ? 'closed' : 'expanded'">
       <i class="i-ri-menu-2-fill" aria-hidden="true" />
     </button>
-    <ul id="project-contents" :inert="!open">
+    <ul id="project-contents" :inert="open ? undefined : true">
       <li v-for="group in groups" :key="group.id">
-        <a :href="'#' + group.id" @click="open = false">{{ group.name }}</a>
+        <a :href="'#' + group.id" @click="state = 'closed'">{{ group.name }}</a>
       </li>
     </ul>
   </nav>

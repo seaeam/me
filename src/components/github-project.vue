@@ -11,6 +11,7 @@ import ProjectIssues from './project-issues.vue'
 const props = defineProps<
   GitHubProjectProps & { snapshot?: IssuePage | null; source?: string }
 >()
+
 const repository = computed(() => normalizeRepository(props.repo))
 const url = computed(() => `https://github.com/${repository.value}`)
 </script>

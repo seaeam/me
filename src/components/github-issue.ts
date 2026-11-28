@@ -15,10 +15,9 @@ function issueLabel(
   repository: string,
   number: string,
   title: string,
-  status?: string,
+  status: string,
 ) {
-  const label = `${title} · ${repository}#${number}`
-  return status ? `${label} · ${status}` : label
+  return `${title} · ${repository}#${number} · ${status}`
 }
 
 export function GitHubIssue({
@@ -29,7 +28,11 @@ export function GitHubIssue({
   status,
   snapshotStatus,
 }: IssueProps) {
-  const label = issueLabel(repository, number, title, status)
+  const description =
+    status ?? (snapshotStatus ? `${snapshotStatus}（最近记录）` : '状态未知')
+
+  const label = issueLabel(repository, number, title, description)
+
   return h(
     'a',
     {
@@ -38,9 +41,8 @@ export function GitHubIssue({
       class: 'github-issue',
       title: label,
       'aria-label': label,
-      'data-status': status,
+      'data-status': status ?? snapshotStatus,
       'data-snapshot-status': snapshotStatus,
-      'aria-busy': status === undefined ? 'true' : undefined,
     },
     [
       h('span', { class: 'github-issue-icon', 'aria-hidden': 'true' }, [
@@ -75,19 +77,31 @@ export function GitHubIssue({
 export const vLiveIssues: ObjectDirective<HTMLElement> = {
   async mounted(element, binding) {
     if (binding.value === false) return
+
     const cards = element.querySelectorAll<HTMLAnchorElement>('a.github-issue')
+
     if (!cards.length) return
+
+    for (const card of cards) card.setAttribute('aria-busy', 'true')
+
     const issues = await fetchHomeIssues()
+
     for (const card of cards) {
       const issue = parseIssueLink(card.href)
       const subject = card.querySelector('.github-issue-subject')
+
       if (!issue || !subject || !card.isConnected) continue
+
       const details = issues[card.href]
+
       if (details) subject.textContent = details.title
+
       const snapshot = card.dataset.snapshotStatus
-      const status = details?.status ?? snapshot ?? 'Status unavailable'
+      const status = details?.status ?? snapshot ?? '暂时无法获取状态'
+
       const description =
         !details && snapshot ? `${status}（最近记录）` : status
+
       card.dataset.status = status
       card.title = issueLabel(
         issue.repository,

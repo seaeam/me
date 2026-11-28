@@ -8,6 +8,7 @@ import SiteBackground from '@/components/background/index.vue'
 import { site } from '@/lib/site'
 
 const route = useRoute()
+
 useHead({
   htmlAttrs: { lang: 'zh-CN' },
   title: computed(() =>

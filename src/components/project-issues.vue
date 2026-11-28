@@ -9,6 +9,7 @@ const props = defineProps<{
   snapshot?: IssuePage | null
   source?: string
 }>()
+
 const snapshot = props.snapshot
 const issues = ref(snapshot?.issues ?? [])
 const nextPage = ref(snapshot?.nextPage ?? null)
@@ -20,14 +21,16 @@ const issuesUrl = `https://github.com/${props.repository}/issues`
 
 async function load(page: number, replace = false) {
   if (loading.value) return
+
   loading.value = true
   failed.value = undefined
+
   const known = new Set(
     replace ? [] : issues.value.map((issue) => issue.number),
   )
+
   try {
-    // A GitHub page can contain only pull requests or overlap the previous page.
-    // Bound automatic scanning of empty pages and let the reader continue.
+    // GitHub 的一页可能全是 PR 或重复项，连续读三页后交给读者决定是否继续。
     for (let pagesRead = 1; !controller.signal.aborted; pagesRead++) {
       const batch = await fetchProjectIssuePage(
         props.repository,
@@ -35,17 +38,22 @@ async function load(page: number, replace = false) {
         AbortSignal.any([controller.signal, AbortSignal.timeout(6500)]),
         props.source,
       )
+
       const additions = batch.issues.filter((issue) => {
         if (known.has(issue.number)) return false
+
         known.add(issue.number)
+
         return true
       })
+
       if (additions.length || batch.nextPage === null || pagesRead === 3) {
         issues.value = replace ? additions : [...issues.value, ...additions]
         nextPage.value = batch.nextPage
         hasResult.value = true
         break
       }
+
       page = batch.nextPage
     }
   } catch {
@@ -84,9 +92,8 @@ onBeforeUnmount(() => controller.abort())
         </button>
         <a v-content-links="issuesUrl" :href="issuesUrl">在 GitHub 查看</a>
       </template>
-      <span v-else-if="!hasResult || (!issues.length && loading)"
-        >正在加载 issue…</span
-      >
+      <span v-else-if="!issues.length && loading">正在加载 issue…</span>
+      <span v-else-if="!hasResult">尚未获取 issue 列表。</span>
       <span v-else-if="!issues.length && !nextPage">暂无打开的 issue</span>
       <button
         v-else-if="nextPage"
@@ -101,6 +108,7 @@ onBeforeUnmount(() => controller.abort())
               : '继续查找 issue'
         }}
       </button>
+      <span v-else-if="loading">正在更新 issue…</span>
     </div>
     <noscript v-if="!hasResult || nextPage"
       ><a v-content-links="issuesUrl" :href="issuesUrl"

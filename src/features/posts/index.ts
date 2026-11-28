@@ -1,20 +1,10 @@
-import type { MarkdownContent } from '@/lib/markdown-content'
+import { readPosts, type CompiledPost } from './read-posts'
 
-export type Article = MarkdownContent & {
-  title: string
-  date: string
-  slug: string
-  duration?: string
-}
+export type { Article } from './read-posts'
 
-const files = import.meta.glob<Omit<Article, 'slug'>>('@content/posts/*.md', {
+const files = import.meta.glob<CompiledPost>('@content/posts/*.md', {
   eager: true,
   import: 'default',
 })
 
-export const posts: Article[] = Object.entries(files)
-  .map(([path, page]) => ({
-    ...page,
-    slug: path.slice(path.lastIndexOf('/') + 1, -3),
-  }))
-  .sort((a, b) => b.date.localeCompare(a.date))
+export const posts = readPosts(files)

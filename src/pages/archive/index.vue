@@ -8,9 +8,11 @@ const dateFormat = new Intl.DateTimeFormat('zh-CN', {
   timeZone: 'UTC',
 })
 </script>
+
 <template>
   <section class="reading-column">
     <h1>{{ sections.posts.label }}</h1>
+    <p v-if="!posts.length">还没有发布文章。</p>
     <template v-for="(post, index) in posts" :key="post.slug">
       <div
         v-if="post.date.slice(0, 4) !== posts[index - 1]?.date.slice(0, 4)"

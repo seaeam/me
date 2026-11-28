@@ -32,4 +32,43 @@ export default defineConfig([
     languageOptions: { globals: globals.node },
   },
   prettier,
+  {
+    files: ['**/*.{test,spec}.{ts,js,tsx,jsx,mts,cts,mjs,cjs}'],
+    ignores: ['**/__SPEC__/**'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'Program',
+          message: '请将测试移到所属模块的 __SPEC__/ 目录。',
+        },
+      ],
+    },
+  },
+  {
+    files: ['**/*.{js,ts,vue}'],
+    rules: {
+      'padding-line-between-statements': [
+        'error',
+        { blankLine: 'always', prev: 'import', next: '*' },
+        { blankLine: 'never', prev: 'import', next: 'import' },
+        { blankLine: 'always', prev: 'export', next: '*' },
+        { blankLine: 'always', prev: '*', next: 'export' },
+        { blankLine: 'always', prev: ['const', 'let'], next: '*' },
+        { blankLine: 'always', prev: '*', next: ['const', 'let'] },
+        {
+          blankLine: 'any',
+          prev: ['singleline-const', 'singleline-let'],
+          next: ['singleline-const', 'singleline-let'],
+        },
+        { blankLine: 'always', prev: '*', next: ['function', 'return'] },
+        {
+          blankLine: 'always',
+          prev: ['function', 'if', 'for', 'try'],
+          next: '*',
+        },
+        { blankLine: 'any', prev: 'if', next: 'if' },
+      ],
+    },
+  },
 ])

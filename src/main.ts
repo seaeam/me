@@ -13,12 +13,15 @@ export const createApp = ViteSSG(
     routes,
     scrollBehavior(to, _from, saved) {
       if (saved) return saved
+
       const target = to.hash && document.getElementById(to.hash.slice(1))
+
       return target ? { el: target } : { top: 0 }
     },
   },
   ({ router, isClient }) => {
     if (!isClient) return
+
     NProgress.configure({ showSpinner: false })
     router.beforeEach((_to, from) => {
       if (from.matched.length) NProgress.start()

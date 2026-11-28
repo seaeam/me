@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { Article } from '@/features/posts'
 import MarkdownBody from '@/components/markdown-body.vue'
+
 defineProps<{ post: Article }>()
 </script>
+
 <template>
   <article class="reading-column">
     <h1>{{ post.title }}</h1>

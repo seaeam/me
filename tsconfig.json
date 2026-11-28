@@ -19,6 +19,7 @@
     "api/**/*.ts",
     "server/**/*.ts",
     "vite.config.ts",
+    "vitest.config.ts",
     "uno.config.ts"
   ]
 }

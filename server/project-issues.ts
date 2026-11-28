@@ -12,32 +12,39 @@ import { homeIssueResponse } from './github-issues.js'
 
 const markdown = new MarkdownIt({ html: true }).use(markdownProjects)
 
-// Only a published component with show-issues can use the site's GitHub credential.
+// 只有发布的项目明确开启了 issue 列表，才使用站点凭据获取数据。
 async function hasPublishedIssues(source: string, repository: string) {
   if (source !== 'home.md' && !/^posts\/[^/\\\0]+\.md$/u.test(source))
     return false
-  let text: string
+
+  let markdownSource: string
+
   try {
-    text = await readFile(`content/${source}`, 'utf8')
+    markdownSource = await readFile(`content/${source}`, 'utf8')
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false
+
     throw error
   }
-  const { body } = frontMatter(text)
+
+  const { body } = frontMatter(markdownSource)
+
   return markdown
     .parse(body, {})
     .some(
       ({ type, meta }) =>
         type === 'github_project' &&
         meta.showIssues &&
-        normalizeRepository(meta.repo) === repository,
+        meta.repo.toLowerCase() === repository,
     )
 }
 
 const ttlSeconds = 300
+
 const runtime = globalThis as typeof globalThis & {
   siteProjectIssuePages?: SnapshotCache<IssuePage>
 }
+
 const firstPages = (runtime.siteProjectIssuePages ??= new Map())
 
 function firstPage(repository: string, token?: string) {
@@ -61,20 +68,25 @@ export async function githubIssuesResponse(
   params: URLSearchParams,
   token?: string,
 ) {
-  if (!params.has('repository')) return homeIssueResponse(token)
-  const repository = normalizeRepository(params.get('repository') ?? '')
-  if (!repository) return Response.json(null, { status: 404 })
-  const input = params.get('page') ?? '1'
-  const page = Number(input)
-  if (!/^[1-9]\d*$/.test(input) || !Number.isSafeInteger(page))
-    return new Response(null, { status: 400 })
+  const repositoryParam = params.get('repository')
+  const pageParam = params.get('page') ?? '1'
+  const page = Number(pageParam)
 
   try {
+    if (repositoryParam === null) return await homeIssueResponse(token)
+
+    const repository = normalizeRepository(repositoryParam)
+
+    if (!repository) return Response.json(null, { status: 404 })
+    if (!/^[1-9]\d*$/.test(pageParam) || !Number.isSafeInteger(page))
+      return new Response(null, { status: 400 })
+
     if (
       !(await hasPublishedIssues(params.get('source') ?? 'home.md', repository))
     )
       return Response.json(null, { status: 404 })
-    // Only cache the first page in memory. Subsequent pages can use the CDN.
+
+    // 只有首页快照与构建共用内存缓存，后续分页由 CDN 缓存。
     const { value, expiresAt } =
       page === 1
         ? await firstPage(repository, token)
@@ -82,7 +94,9 @@ export async function githubIssuesResponse(
             value: await fetchGitHubIssuePage(repository, page, token),
             expiresAt: Date.now() + ttlSeconds * 1000,
           }
+
     const maxAge = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000))
+
     return Response.json(value, {
       headers: {
         'Cache-Control': `public, max-age=${maxAge}, s-maxage=${maxAge}`,
@@ -90,9 +104,10 @@ export async function githubIssuesResponse(
     })
   } catch (error) {
     console.warn(
-      `[project-issues] ${repository} page ${page}:`,
+      `[github-issues] ${repositoryParam ?? 'home.md'} page ${page}:`,
       error instanceof Error ? error.message : error,
     )
+
     return new Response(null, {
       status: 503,
       headers: { 'Cache-Control': 'no-store' },

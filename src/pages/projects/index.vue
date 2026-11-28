@@ -1,42 +1,8 @@
 <script setup lang="ts">
-import projectData from '@content/projects.json'
 import { vContentLinks } from '@/lib/content-links'
 import { site } from '@/lib/site'
-import ProjectContents from './project-contents.vue'
-
-type Project = {
-  name: string
-  group?: string
-  description?: string
-  icon?: string
-  iconDark?: string
-  url?: string
-}
-const projects: Project[] = projectData
-const groups = new Map<
-  string,
-  { id: string; name: string; projects: Project[] }
->()
-const ids = new Set<string>()
-for (const project of projects) {
-  const name = project.group?.trim() || 'Current Focus'
-  let group = groups.get(name)
-  if (!group) {
-    const slug =
-      name
-        .toLowerCase()
-        .match(/[\p{L}\p{N}]+/gu)
-        ?.join('-') || 'group'
-    const base = name === 'Current Focus' ? 'current-focus' : 'projects-' + slug
-    let id = base
-    for (let suffix = 2; ids.has(id); suffix++) id = base + '-' + suffix
-    ids.add(id)
-    group = { id, name, projects: [] }
-    groups.set(name, group)
-  }
-  group.projects.push(project)
-}
-const projectGroups = [...groups.values()]
+import ProjectContents from './components/project-contents/index.vue'
+import { projectGroups } from './const'
 </script>
 
 <template>
@@ -58,6 +24,7 @@ const projectGroups = [...groups.values()]
     </header>
 
     <ProjectContents v-if="projectGroups.length" :groups="projectGroups" />
+    <p v-else class="project-empty">暂时没有公开的项目。</p>
     <section
       v-for="group in projectGroups"
       :key="group.id"
@@ -100,21 +67,15 @@ const projectGroups = [...groups.values()]
       class="reading-column project-sponsor"
       aria-label="支持我的开源项目">
       <hr />
-      <p>
-        If you enjoy my work and find it useful, consider supporting me and this
-        ecosystem. Thank you!
-      </p>
-      <div class="sponsor-actions">
-        <a
-          v-content-links="site.afdian"
-          :href="site.afdian"
-          class="project-button afdian-button group">
-          <i
-            class="i-ph-lightning-duotone group-hover:i-ph-lightning-fill group-focus-visible:i-ph-lightning-fill transition-all duration-200 ease-out"
-            aria-hidden="true" />
-          在爱发电上支持我
-        </a>
-      </div>
+      <a
+        v-content-links="site.afdian"
+        :href="site.afdian"
+        class="project-button afdian-button group">
+        <i
+          class="i-ph-lightning-duotone group-hover:i-ph-lightning-fill group-focus-visible:i-ph-lightning-fill transition-all duration-200 ease-out"
+          aria-hidden="true" />
+        在爱发电上支持我
+      </a>
     </aside>
 
     <footer class="project-footer">
@@ -169,6 +130,9 @@ const projectGroups = [...groups.values()]
   margin: 2rem auto 0;
   border: 0;
   border-top: 1px solid #8885;
+}
+.project-empty {
+  text-align: center;
 }
 .focus-section {
   margin-top: 2.5rem;
@@ -291,12 +255,6 @@ a.project-entry:is(:hover, :focus-visible) {
   margin: 0 auto 2rem;
   border: 0;
   border-top: 1px solid #7d7d7d4d;
-}
-.project-sponsor p {
-  margin: 0 0 1.25rem;
-}
-.sponsor-actions {
-  display: flex;
 }
 .afdian-button {
   display: inline-block;

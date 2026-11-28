@@ -11,6 +11,7 @@ function scrollToTop() {
   const reduceMotion = window.matchMedia(
     '(prefers-reduced-motion: reduce)',
   ).matches
+
   window.scrollTo({ top: 0, behavior: reduceMotion ? 'instant' : 'smooth' })
 }
 
@@ -25,7 +26,7 @@ onUnmounted(() => window.removeEventListener('scroll', updateVisibility))
   <button
     type="button"
     class="scroll-to-top"
-    title="Scroll to top"
+    title="返回顶部"
     aria-label="返回顶部"
     :disabled="!visible"
     @click="scrollToTop">
