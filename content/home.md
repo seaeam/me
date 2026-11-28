@@ -9,9 +9,9 @@ Hey！It's seam，重邮在读研三小前端，正在向全栈转型
 
 过往实习　[![](/media/brands/dongchedi.png) 懂车帝](https://www.dongchedi.com/) [![](/media/brands/bytedance.png) 字节跳动](https://www.bytedance.com/zh/) [![](/media/brands/mediastorm.svg) 影视飓风](https://www.ysjf.com/)
 
-最近在做：<GitHubProject repo="506-FETL/resume" name="GResume" icon="/media/brands/gresume.svg" show-issues />
+最近在做：<GitHubProject repo="506-FETL/resume" name="GResume" icon="/media/brands/gresume.svg"  show-issues />
 
-用过 GResume 的话，欢迎[提建议](https://github.com/506-FETL/resume/issues)或[提交 PR](https://github.com/506-FETL/resume/compare)。
+如果你使用过，觉得它们有用，或者有任何建议、想法或吐槽，欢迎 <span class="mono">pr</span>
 
 ## Find me on
 
@@ -19,4 +19,4 @@ Hey！It's seam，重邮在读研三小前端，正在向全栈转型
 - [![](/media/social/bilibili.svg) bilibili](https://space.bilibili.com/158284800)
 - [![](/media/social/feishu.png) lark](https://www.feishu.cn/invitation/page/add_contact/?token=58as6eeb-7216-4e6f-a6c4-ca54a8fe1085&unique_id=2NsKTlHG8h6vrZkt6B5zEA==)
 
-也可以给我写邮件：[smc1756&#64;foxmail.com](mailto:smc1756@foxmail.com)。
+Or mail me at <span class="mono">smc1756&#64;foxmail.com</span>
